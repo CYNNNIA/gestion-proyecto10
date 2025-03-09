@@ -1,0 +1,91 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f8f9fa;
+  color: #333;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Estilos del header */
+header {
+  background-color: #d63384;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 22px;
+}
+
+nav button {
+  background: white;
+  color: #d63384;
+  border: none;
+  padding: 8px 15px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+nav button:hover {
+  background: #f3d1e6;
+}
+
+/* Estilos generales de secciones */
+main {
+  max-width: 500px;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Formularios */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input, select, button {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+button {
+  background: #d63384;
+  color: white;
+  cursor: pointer;
+  border: none;
+}
+
+button:hover {
+  background: #b0256b;
+}
+
+/* Lista de reservas */
+#bookingsList {
+  list-style: none;
+  margin-top: 15px;
+}
+
+#bookingsList li {
+  background: #f3d1e6;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px 0;
+}

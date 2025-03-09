@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva de Maquillaje</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Reserva tu sesión de Maquillaje 💄</h1>
+        <nav>
+            <button id="loginBtn">Iniciar Sesión</button>
+            <button id="registerBtn">Registrarse</button>
+            <button id="logoutBtn" style="display: none;">Cerrar Sesión</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="authSection">
+            <h2>Inicia sesión o regístrate</h2>
+            <form id="authForm">
+                <input type="text" id="name" placeholder="Nombre" style="display: none;">
+                <input type="email" id="email" placeholder="Correo electrónico" required>
+                <input type="password" id="password" placeholder="Contraseña" required>
+                <button type="submit">Enviar</button>
+            </form>
+            <p id="authMessage"></p>
+        </section>
+
+        <section id="bookingSection" style="display: none;">
+            <h2>Reserva tu cita de maquillaje</h2>
+            <form id="bookingForm">
+                <input type="date" id="date" required>
+                <select id="serviceType">
+                    <option value="Maquillaje de día">Maquillaje de día</option>
+                    <option value="Maquillaje de noche">Maquillaje de noche</option>
+                    <option value="Boda">Boda</option>
+                    <option value="Fiesta">Fiesta</option>
+                </select>
+                <button type="submit">Reservar</button>
+            </form>
+
+            <h3>Mis Reservas</h3>
+            <ul id="bookingsList"></ul>
+        </section>
+    </main>
+
+    <script src="api.js"></script>
+    <script src="auth.js"></script>
+    <script src="bookings.js"></script>
+</body>
+</html>
