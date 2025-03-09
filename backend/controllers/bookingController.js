@@ -1,45 +1,67 @@
 const Booking = require('../models/Booking');
 
-// Crear una reserva
-exports.createBooking = async (req, res) => {
-  try {
-    const { date, serviceType } = req.body;
-    const userId = req.user.id;
+const createBooking = async (req, res) => {
+    try {
+        const { service, date, time } = req.body;
+        const userId = req.user.id;
 
-    const newBooking = new Booking({ user: userId, date, serviceType });
-    await newBooking.save();
+        // Verificar si ya hay una reserva en la misma fecha y hora
+        const existingBooking = await Booking.findOne({ date, time });
+        if (existingBooking) {
+            return res.status(400).json({ message: "Ya hay una reserva en esta fecha y hora." });
+        }
 
-    res.status(201).json({ message: 'Reserva creada con éxito', booking: newBooking });
-  } catch (error) {
-    res.status(500).json({ message: 'Error en el servidor' });
-  }
+        const newBooking = new Booking({
+            user: userId,
+            service,
+            date,
+            time
+        });
+
+        await newBooking.save();
+        res.status(201).json(newBooking);
+    } catch (error) {
+        res.status(500).json({ message: "Error creando la reserva", error });
+    }
 };
 
-// Obtener todas las reservas del usuario
-exports.getUserBookings = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const bookings = await Booking.find({ user: userId });
-
-    res.json(bookings);
-  } catch (error) {
-    res.status(500).json({ message: 'Error en el servidor' });
-  }
+const getBookingsByUser = async (req, res) => {
+    try {
+        const bookings = await Booking.find({ user: req.user.id }).populate('user', 'name email');
+        res.json(bookings);
+    } catch (error) {
+        res.status(500).json({ message: "Error obteniendo reservas", error });
+    }
 };
 
-// Cancelar una reserva
-exports.cancelBooking = async (req, res) => {
-  try {
-    const { bookingId } = req.params;
-    const booking = await Booking.findById(bookingId);
-
-    if (!booking) return res.status(404).json({ message: 'Reserva no encontrada' });
-
-    booking.status = 'cancelado';
-    await booking.save();
-
-    res.json({ message: 'Reserva cancelada con éxito' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error en el servidor' });
-  }
+const getAllBookings = async (req, res) => {
+    try {
+        const bookings = await Booking.find().populate('user', 'name email');
+        res.json(bookings);
+    } catch (error) {
+        res.status(500).json({ message: "Error obteniendo todas las reservas", error });
+    }
 };
+
+const cancelBooking = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const booking = await Booking.findById(id);
+
+        if (!booking) {
+            return res.status(404).json({ message: "Reserva no encontrada." });
+        }
+
+        // Verificar si la reserva pertenece al usuario o si es admin
+        if (booking.user.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({ message: "No tienes permiso para cancelar esta reserva." });
+        }
+
+        await booking.deleteOne();
+        res.json({ message: "Reserva cancelada con éxito." });
+    } catch (error) {
+        res.status(500).json({ message: "Error cancelando la reserva", error });
+    }
+};
+
+module.exports = { createBooking, getBookingsByUser, getAllBookings, cancelBooking };
