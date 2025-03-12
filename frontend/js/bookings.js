@@ -1,35 +1,57 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const bookingsList = document.getElementById('bookingsList'); // 💡 Asegúrate de que este elemento existe en el HTML
-    const token = localStorage.getItem('token');
+document.addEventListener('DOMContentLoaded', () => {
+    const bookingForm = document.getElementById("bookingForm");
+    const dateInput = document.getElementById("date");
+    const dateError = document.getElementById("dateError");
 
-    if (!token) {
-        console.log("🔴 No hay token, redirigiendo a login...");
-        return;
-    }
+    // Días permitidos (Lunes = 1, Miércoles = 3, Viernes = 5)
+    const allowedDays = [1, 3, 5];
 
-    async function loadUserBookings() {
+    // ❌ Validar que el usuario solo seleccione los días permitidos
+    dateInput.addEventListener("change", function () {
+        const selectedDate = new Date(this.value);
+        const selectedDay = selectedDate.getUTCDay(); // Obtener día de la semana
+
+        if (!allowedDays.includes(selectedDay)) {
+            dateError.style.display = "block"; // Mostrar el mensaje de error
+            this.value = ""; // Borrar la fecha seleccionada
+        } else {
+            dateError.style.display = "none"; // Ocultar el mensaje de error
+        }
+    });
+
+    // ✅ Manejo del formulario de reservas
+    bookingForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const date = dateInput.value;
+        const time = document.getElementById("time").value;
+        const service = document.getElementById("type").value;
+
+        if (!date) {
+            dateError.style.display = "block";
+            return;
+        }
+
         try {
-            const response = await fetch('http://localhost:5002/api/bookings', {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await fetch("http://127.0.0.1:5002/api/bookings/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify({ date, time, service })
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                throw new Error(`Error en la solicitud: ${response.status}`);
+                throw new Error(data.message || "Error al reservar la cita.");
             }
 
-            const bookings = await response.json();
-            console.log("📅 Reservas cargadas:", bookings);
-
-            bookingsList.innerHTML = bookings.length > 0
-                ? bookings.map(booking => `<li>${booking.date} - ${booking.service}</li>`).join('')
-                : "<p>No tienes reservas aún.</p>";
-
+            alert("Reserva creada con éxito.");
+            bookingForm.reset();
         } catch (error) {
-            console.error("⚠️ Error al cargar reservas:", error);
-            bookingsList.innerHTML = "<p>Error al cargar reservas.</p>";
+            alert(error.message);
         }
-    }
-
-    loadUserBookings();
+    });
 });

@@ -1,18 +1,18 @@
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
-const Booking = require('../models/Booking'); // Asegúrate de que este modelo exista
-
 const router = express.Router();
+const { createBooking, getBookingsByUser, getAllBookings, cancelBooking } = require('../controllers/bookingController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// Obtener todas las reservas del usuario autenticado
-router.get('/', authMiddleware, async (req, res) => {
-    try {
-        const bookings = await Booking.find({ user: req.user.id });
-        res.json(bookings);
-    } catch (error) {
-        console.error("⚠️ Error al obtener reservas:", error);
-        res.status(500).json({ message: 'Error al obtener reservas' });
-    }
-});
+// Ruta para crear una reserva (requiere autenticación)
+router.post('/create', authMiddleware, createBooking);
+
+// 🔍 Ruta para obtener las reservas del usuario autenticado
+router.get('/user', authMiddleware, getBookingsByUser);
+
+// Ruta para obtener todas las reservas (solo admin)
+router.get('/all', authMiddleware, getAllBookings);
+
+// Ruta para cancelar una reserva
+router.delete('/cancel/:id', authMiddleware, cancelBooking);
 
 module.exports = router;
