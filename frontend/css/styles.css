@@ -1,0 +1,84 @@
+/* ✅ Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+/* 🏠 Estilos de la barra de navegación */
+nav {
+  background-color: #333;
+  padding: 15px;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.nav-links li {
+  display: inline;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.btn-login {
+  background-color: #ff6600;
+  padding: 10px 15px;
+  border-radius: 5px;
+  color: white;
+}
+
+/* 🌟 Sección principal */
+.hero {
+  background-color: #f4f4f4;
+  padding: 50px 20px;
+}
+
+.hero h1 {
+  font-size: 28px;
+}
+
+.btn-primary {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+/* 📝 Información */
+.info-section {
+  padding: 40px 20px;
+}
+
+.info-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.info-box {
+  background: #ddd;
+  padding: 20px;
+  width: 200px;
+  border-radius: 10px;
+}
+
+/* 📌 Pie de página */
+footer {
+  background-color: #222;
+  color: white;
+  padding: 10px;
+  margin-top: 20px;
+}

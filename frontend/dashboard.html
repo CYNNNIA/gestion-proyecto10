@@ -8,8 +8,51 @@
 </head>
 <body>
 
-    <h1>Panel de usuario</h1>
+    <!-- 🏠 Barra de Navegación -->
+    <header>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="bookings.html">Reservas</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="profile.html">Perfil</a></li>
+                <li><a href="login.html" class="btn-login">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <script src="js/script.js"></script>
+    <!-- 🎯 Título Principal -->
+    <h1>Panel de Usuario</h1>
+
+    <!-- 📊 Sección de estadísticas -->
+    <section class="dashboard-summary">
+        <h2>Resumen</h2>
+        <div class="stats">
+            <div class="stat-box">
+                <h3>Reservas Totales</h3>
+                <p id="totalBookings">0</p>
+            </div>
+            <div class="stat-box">
+                <h3>Próxima Reserva</h3>
+                <p id="nextBooking">No disponible</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 📋 Lista de Reservas -->
+    <section class="reservations">
+        <h2>Mis Reservas</h2>
+        <ul id="reservationsList"></ul>
+        <a href="bookings.html" class="btn-primary">Hacer Nueva Reserva</a>
+    </section>
+
+    <!-- 📌 Pie de Página -->
+    <footer>
+        <p>&copy; 2025 Plataforma de Reservas. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Conexión con JavaScript -->
+    <script src="js/dashboard.js"></script>
+
 </body>
 </html>

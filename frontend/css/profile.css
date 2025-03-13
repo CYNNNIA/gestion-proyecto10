@@ -1,0 +1,75 @@
+/* 🌟 Estilos Generales */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* 🔹 Contenedor del Perfil */
+.profile-container {
+  width: 90%;
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+/* 📝 Información del Usuario */
+.user-info {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.user-info p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+.user-info strong {
+  color: #333;
+}
+
+/* 🔘 Botones */
+button, .btn-primary, .btn-secondary, .btn-back {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #c82333;
+}
+
+.btn-back {
+  display: inline-block;
+  background-color: #6c757d;
+  color: white;
+  text-decoration: none;
+}
+
+.btn-back:hover {
+  background-color: #5a6268;
+}

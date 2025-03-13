@@ -1,21 +1,30 @@
-document.addEventListener('DOMContentLoaded', () => {
+import { apiRequest } from "./js/api.js";
+
+document.addEventListener("DOMContentLoaded", () => {
     const bookingForm = document.getElementById("bookingForm");
     const dateInput = document.getElementById("date");
+    const timeInput = document.getElementById("time");
+    const serviceInput = document.getElementById("type");
     const dateError = document.getElementById("dateError");
 
-    // Días permitidos (Lunes = 1, Miércoles = 3, Viernes = 5)
+    // 📅 Días permitidos (Lunes = 1, Miércoles = 3, Viernes = 5)
     const allowedDays = [1, 3, 5];
 
-    // ❌ Validar que el usuario solo seleccione los días permitidos
+    // 🛑 Validar que el usuario seleccione una fecha válida
     dateInput.addEventListener("change", function () {
         const selectedDate = new Date(this.value);
-        const selectedDay = selectedDate.getUTCDay(); // Obtener día de la semana
+        const selectedDay = selectedDate.getDay();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        if (!allowedDays.includes(selectedDay)) {
-            dateError.style.display = "block"; // Mostrar el mensaje de error
-            this.value = ""; // Borrar la fecha seleccionada
+        if (selectedDate < today) {
+            showError(dateError, "⚠️ No puedes seleccionar una fecha pasada.");
+            this.value = "";
+        } else if (!allowedDays.includes(selectedDay)) {
+            showError(dateError, "⚠️ Solo puedes reservar los lunes, miércoles y viernes.");
+            this.value = "";
         } else {
-            dateError.style.display = "none"; // Ocultar el mensaje de error
+            hideError(dateError);
         }
     });
 
@@ -24,34 +33,40 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         const date = dateInput.value;
-        const time = document.getElementById("time").value;
-        const service = document.getElementById("type").value;
+        const time = timeInput.value;
+        const service = serviceInput.value;
+        const token = localStorage.getItem("token");
 
-        if (!date) {
-            dateError.style.display = "block";
+        if (!token) {
+            alert("⚠️ Debes iniciar sesión para hacer una reserva.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (!date || !time || !service) {
+            alert("⚠️ Todos los campos son obligatorios.");
             return;
         }
 
         try {
-            const response = await fetch("http://127.0.0.1:5002/api/bookings/create", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
-                },
-                body: JSON.stringify({ date, time, service })
-            });
+            const data = await apiRequest("/bookings/create", "POST", { date, time, service }, true);
+            if (!data) return;
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || "Error al reservar la cita.");
-            }
-
-            alert("Reserva creada con éxito.");
+            alert("✅ Reserva creada con éxito.");
             bookingForm.reset();
         } catch (error) {
             alert(error.message);
         }
     });
 });
+
+// 🛑 Función para mostrar errores
+function showError(element, message) {
+    element.innerText = message;
+    element.style.display = "block";
+}
+
+// ✅ Función para ocultar errores
+function hideError(element) {
+    element.style.display = "none";
+}
