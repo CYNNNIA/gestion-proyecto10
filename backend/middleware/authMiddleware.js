@@ -1,29 +1,30 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-  console.log('Cabeceras recibidas:', req.headers); // Para depuración
-
-  const authHeader = req.header('Authorization');
-  console.log('Token recibido:', authHeader);
-
-  if (!authHeader) {
-    return res.status(401).json({ message: 'Acceso denegado. No hay token.' });
-  }
-
-  const tokenParts = authHeader.split(' ');
-  if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
-    return res.status(401).json({ message: 'Formato de token incorrecto' });
-  }
-
-  const token = tokenParts[1].replace(/"/g, ''); // Elimina comillas si las hay
-
   try {
+    // 🔍 Verificar si el token está presente en el encabezado
+    const authHeader = req.header('Authorization');
+    if (!authHeader) {
+      return res.status(401).json({ message: 'Acceso denegado. No hay token.' });
+    }
+
+    // 📌 El token debe tener el formato "Bearer token"
+    const tokenParts = authHeader.split(' ');
+    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+      return res.status(401).json({ message: 'Formato de token incorrecto' });
+    }
+
+    // 🎫 Extraer y limpiar el token
+    const token = tokenParts[1].trim();
+
+    // 🔍 Verificar el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Token decodificado:', decoded); // Verificar contenido del token
-    req.user = decoded;
+    req.user = decoded; // Agregar los datos del usuario autenticado a `req.user`
+
+    console.log('✅ Usuario autenticado:', decoded);
     next();
   } catch (error) {
-    console.error('Error al verificar token:', error.message);
-    res.status(400).json({ message: 'Token inválido' });
+    console.error('❌ Error al verificar token:', error.message);
+    return res.status(403).json({ message: 'Token inválido o expirado.' });
   }
 };

@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 // Ruta para crear una reserva (requiere autenticación)
 router.post('/create', authMiddleware, createBooking);
 
-// 🔍 Ruta para obtener las reservas del usuario autenticado
+// Ruta para obtener las reservas del usuario autenticado
 router.get('/user', authMiddleware, getBookingsByUser);
 
 // Ruta para obtener todas las reservas (solo admin)
