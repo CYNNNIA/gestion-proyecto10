@@ -1,75 +1,73 @@
-/* 🌟 Estilos Generales */
+/* ✅ Estilos generales */
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;
-  text-align: center;
   margin: 0;
   padding: 0;
+  text-align: center;
 }
 
-/* 🔹 Contenedor del Perfil */
-.profile-container {
-  width: 90%;
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  background: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+/* ✅ Navbar */
+nav {
+  background-color: #333;
+  padding: 15px;
 }
 
-/* 📝 Información del Usuario */
-.user-info {
-  text-align: left;
-  margin-bottom: 20px;
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
 }
 
-.user-info p {
+nav ul li {
+  margin: 0 15px;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.logout-btn {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 8px 12px;
   font-size: 16px;
-  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
-.user-info strong {
+.logout-btn:hover {
+  background-color: #c9302c;
+}
+
+/* ✅ Contenedor del perfil */
+.profile-container {
+  margin-top: 50px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
   color: #333;
 }
 
-/* 🔘 Botones */
-button, .btn-primary, .btn-secondary, .btn-back {
+/* ✅ Footer */
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  position: absolute;
+  bottom: 0;
   width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-  text-decoration: none;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-secondary {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #c82333;
-}
-
-.btn-back {
-  display: inline-block;
-  background-color: #6c757d;
-  color: white;
-  text-decoration: none;
-}
-
-.btn-back:hover {
-  background-color: #5a6268;
 }

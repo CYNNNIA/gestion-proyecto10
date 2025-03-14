@@ -8,13 +8,12 @@ const router = express.Router();
 // **Registro de usuario**
 router.post('/register', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !role) {
             return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
         }
 
-        // Validación de email en formato correcto
         const emailRegex = /.+\@.+\..+/;
         if (!emailRegex.test(email)) {
             return res.status(400).json({ message: 'Formato de correo inválido.' });
@@ -31,13 +30,19 @@ router.post('/register', async (req, res) => {
         }
 
         // Crear usuario
-        const user = new User({ name, email, password });
+        const user = new User({ name, email, password, role });
         await user.save();
 
-        res.status(201).json({ message: 'Usuario registrado correctamente. Ahora puedes iniciar sesión.' });
+        // ✅ ENVÍO DE RESPUESTA EXITOSA
+        return res.status(201).json({ 
+            success: true,
+            message: 'Usuario registrado correctamente. Ahora puedes iniciar sesión.',
+            user: { id: user._id, name: user.name, email: user.email, role: user.role }
+        });
+
     } catch (error) {
         console.error('Error en el registro:', error);
-        res.status(500).json({ message: 'Error en el servidor. Inténtalo más tarde.' });
+        return res.status(500).json({ message: 'Error en el servidor. Inténtalo más tarde.' });
     }
 });
 

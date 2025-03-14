@@ -7,7 +7,14 @@
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-
+  <nav>
+    <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="bookings.html">Mis Reservas</a></li>
+        <li><a href="dashboard.html">Panel</a></li>
+        <li><a href="login.html">Iniciar Sesión</a></li>
+    </ul>
+</nav>
     <!-- 🔹 Contenedor Principal -->
     <div class="login-container">
         <h1 id="authTitle">Iniciar Sesión</h1>
@@ -25,9 +32,12 @@
             </div>
 
             <div class="input-group">
-                <label for="authPassword">Contraseña:</label>
-                <input type="password" id="authPassword" placeholder="Tu contraseña" required>
-            </div>
+              <label for="authRole">Registrarse como:</label>
+              <select id="authRole" required>
+                  <option value="cliente">Cliente</option>
+                  <option value="profesional">Profesional</option>
+              </select>
+          </div>
 
             <p id="errorMessage" class="error-message"></p>
 
@@ -43,6 +53,10 @@
     </div>
 
     <script src="js/auth.js"></script>
+    <footer>
+      <p>&copy; 2025 Plataforma de Reservas - Todos los derechos reservados</p>
+  </footer>
 
+  <script src="js/auth.js"></script>
 </body>
 </html>

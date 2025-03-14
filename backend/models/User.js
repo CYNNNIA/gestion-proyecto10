@@ -10,7 +10,11 @@ const userSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, "Por favor, introduce un correo válido"]
   },
   password: { type: String, required: [true, "La contraseña es obligatoria"], minlength: 6 },
-  role: { type: String, enum: ['cliente', 'admin'], default: 'cliente' }
+  role: { 
+    type: String, 
+    enum: ['cliente', 'profesional'], 
+    default: 'cliente' // Por defecto, todos son clientes
+  }
 });
 
 // Middleware para encriptar la contraseña antes de guardar
