@@ -5,36 +5,50 @@ body {
   text-align: center;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* 🔹 Contenedor del Formulario */
-.login-container {
+.auth-container {
   width: 90%;
   max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
+  margin: auto;
+  padding: 25px;
   background: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+  text-align: center;
+}
+
+/* 📝 Títulos */
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
 }
 
 /* 📝 Campos de Entrada */
 .input-group {
+  width: 100%;
   text-align: left;
   margin-bottom: 15px;
 }
 
 .input-group label {
-  display: block;
   font-weight: bold;
+  display: block;
   margin-bottom: 5px;
 }
 
-.input-group input {
+.input-group input,
+.input-group select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
 /* 🚨 Mensaje de Error */
@@ -42,17 +56,20 @@ body {
   color: red;
   font-size: 14px;
   display: none;
+  margin-top: 10px;
 }
 
 /* 🔘 Botones */
 button, .btn-secondary {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-top: 10px;
   border: none;
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
 }
 
 button {
@@ -65,7 +82,6 @@ button:hover {
 }
 
 .btn-secondary {
-  display: inline-block;
   background-color: #6c757d;
   color: white;
   text-decoration: none;
@@ -78,4 +94,48 @@ button:hover {
 /* 📌 Link para cambiar entre Login y Registro */
 #authToggleText {
   margin-top: 15px;
+  font-size: 14px;
+}
+
+#authToggleText a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+#authToggleText a:hover {
+  text-decoration: underline;
+}
+
+/* 🏠 Estilos de la barra de navegación */
+nav {
+  background-color: #333;
+  padding: 15px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+nav li {
+  display: inline;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+/* 📌 Pie de página */
+footer {
+  margin-top: auto; /* Empuja el footer hacia abajo */
+  width: 100%;
+  background-color: #222;
+  color: white;
+  text-align: center;
+  padding: 10px;
 }

@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path'); // ✅ Importa path para servir archivos estáticos
 const connectDB = require('./config/db');
 require('dotenv').config();
 
@@ -18,7 +19,10 @@ connectDB();
 app.use(cors());
 app.use(express.json()); // Para leer JSON en el body
 
-// ✅ Rutas
+// ✅ Servir archivos estáticos desde la carpeta frontend
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+// ✅ Rutas de la API
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/users', userRoutes);
@@ -31,5 +35,5 @@ app.get('/', (req, res) => {
 
 // ✅ Iniciar el servidor
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);
+    console.log(`🚀 Servidor corriendo en http://127.0.0.1:${PORT}`);
 });

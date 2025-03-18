@@ -45,7 +45,7 @@ exports.getServicesByProfessional = async (req, res) => {
         const professionalId = req.user.id;
         const services = await Service.find({ professional: professionalId });
 
-        res.json(services);
+        res.json({ services });
     } catch (error) {
         console.error('❌ Error al obtener los servicios del profesional:', error);
         res.status(500).json({ message: 'Error en el servidor' });

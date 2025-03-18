@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Servicios</title>
+    <link rel="stylesheet" href="css/services.css">
+</head>
+<body>
+  <nav>
+    <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="bookings.html">Mis Reservas</a></li>
+        <li id="navServices" style="display: none;"><a href="services.html">Mis Servicios</a></li>
+        <li><button id="logoutBtn" class="logout-btn">Cerrar Sesión</button></li>
+    </ul>
+</nav>
+
+    <h1>Mis Servicios</h1>
+    <h2>Crear Nuevo Servicio</h2>
+<form id="serviceForm">
+    <div class="input-group">
+        <label for="serviceName">Nombre del Servicio:</label>
+        <input type="text" id="serviceName" required>
+    </div>
+
+    <div class="input-group">
+        <label for="serviceDescription">Descripción:</label>
+        <textarea id="serviceDescription" required></textarea>
+    </div>
+
+    <div class="input-group">
+        <label for="servicePrice">Precio (€):</label>
+        <input type="number" id="servicePrice" required>
+    </div>
+
+    <div class="input-group">
+        <label for="serviceCategory">Categoría:</label>
+        <select id="serviceCategory">
+            <option value="Belleza">Belleza</option>
+            <option value="Salud">Salud</option>
+            <option value="Deporte">Deporte</option>
+            <option value="Educación">Educación</option>
+        </select>
+    </div>
+
+    <button type="submit">Crear Servicio</button>
+</form>
+
+<h2>Lista de Servicios</h2>
+<ul id="serviceList"></ul>
+
+<script src="js/services.js"></script>
+    <ul id="serviceList"></ul>
+    <footer>
+      <p>© 2025 Plataforma de Reservas</p>
+  </footer>
+    <script src="js/services.js"></script>
+</body>
+</html>

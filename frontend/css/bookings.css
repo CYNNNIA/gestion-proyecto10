@@ -88,3 +88,11 @@ nav {
   margin-bottom: 5px;
   border-radius: 5px;
 }
+footer {
+  margin-top: auto; /* Empuja el footer hacia abajo */
+  width: 100%;
+  background-color: #222;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}

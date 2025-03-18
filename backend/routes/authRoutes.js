@@ -65,17 +65,18 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Contraseña incorrecta.' });
         }
 
-        // Generar el token JWT
+        // 🔹 Generar el token con el role
         const token = jwt.sign(
-            { id: user._id, name: user.name, email: user.email },
+            { id: user._id, name: user.name, email: user.email, role: user.role }, // ✅ Agregado el role
             process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
 
+        // 🔹 Enviar el role en la respuesta
         res.json({ 
             message: 'Inicio de sesión exitoso.', 
             token, 
-            user: { id: user._id, name: user.name, email: user.email } 
+            user: { id: user._id, name: user.name, email: user.email, role: user.role } // ✅ Agregado el role aquí también
         });
 
     } catch (error) {
