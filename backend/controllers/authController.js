@@ -1,41 +1,29 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 // **Registro de usuario**
 exports.registerUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
-
         if (!name || !email || !password || !role) {
-            return res.status(400).json({ message: '⚠️ Todos los campos son obligatorios.' });
+            return res.status(400).json({ message: "Todos los campos son obligatorios." });
         }
 
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({ message: '⚠️ El correo ya está registrado.' });
+            return res.status(400).json({ message: "El correo ya está registrado." });
         }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
+        const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ name, email, password: hashedPassword, role });
+
         await user.save();
-
-        console.log("🟢 Usuario registrado correctamente:", user); // Log para verificar
-
-        res.status(201).json({
-            message: '✅ Registro exitoso',
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
-        });
+        res.status(201).json({ message: "Usuario registrado con éxito.", user });
 
     } catch (error) {
-        console.error('❌ Error en el registro:', error);
-        res.status(500).json({ message: '⚠️ Error en el servidor. Inténtalo más tarde.' });
+        console.error("Error en el registro:", error);
+        res.status(500).json({ message: "Error en el servidor." });
     }
 };
 

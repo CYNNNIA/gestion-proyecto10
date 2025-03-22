@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
+    <title>Registrarse</title>
     <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/.css">
 </head>
 <body>
-    <nav id="navbar"></nav> <!-- Navbar dinámica -->
+    <nav id="navbar"></nav>
 
     <div class="auth-container">
-        <h1 id="authTitle">Iniciar Sesión</h1>
+        <h1 id="authTitle">Registrarse</h1>
 
         <form id="authForm">
+            <div class="input-group">
+                <label for="authName">Nombre:</label>
+                <input type="text" id="authName" required placeholder="Tu nombre">
+            </div>
+
             <div class="input-group">
                 <label for="authEmail">Email:</label>
                 <input type="email" id="authEmail" required placeholder="ejemplo@email.com">
@@ -23,18 +29,25 @@
                 <input type="password" id="authPassword" required placeholder="********">
             </div>
 
-            <button type="submit" id="authSubmitBtn">Ingresar</button>
+            <div class="input-group">
+                <label for="authRole">Rol:</label>
+                <select id="authRole">
+                    <option value="cliente">Cliente</option>
+                    <option value="profesional">Profesional</option>
+                </select>
+            </div>
+
+            <button type="submit" id="authSubmitBtn">Registrarse</button>
         </form>
 
         <p id="authToggleText">
-            ¿No tienes cuenta? <a href="register.html">Regístrate aquí</a>
+            ¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a>
         </p>
 
         <p id="errorMessage" class="error-message" style="display: none;"></p>
     </div>
-
+    <footer id="footer"></footer>
     <script src="js/layout.js"></script>
     <script src="js/auth.js"></script>
-    <footer id="footer"></footer>
 </body>
 </html>

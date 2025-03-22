@@ -1,39 +1,27 @@
 const express = require('express');
+const dotenv = require('dotenv');
 const cors = require('cors');
-const path = require('path'); // ✅ Importa path para servir archivos estáticos
 const connectDB = require('./config/db');
-require('dotenv').config();
 
+// Importar rutas (Asegúrate de que coincidan con los nombres reales de los archivos)
 const authRoutes = require('./routes/authRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
 const userRoutes = require('./routes/userRoutes');
-const serviceRoutes = require('./routes/serviceRoutes'); // 📌 Nueva ruta para servicios
 
-const app = express();
-const PORT = process.env.PORT || 5002;
-
-// ✅ Conectar a la base de datos
+dotenv.config();
 connectDB();
 
-// ✅ Middleware
+const app = express();
+
+app.use(express.json());
 app.use(cors());
-app.use(express.json()); // Para leer JSON en el body
 
-// ✅ Servir archivos estáticos desde la carpeta frontend
-app.use(express.static(path.join(__dirname, 'frontend')));
-
-// ✅ Rutas de la API
+// Definir rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/services', serviceRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/services', serviceRoutes); // 📌 Ruta para la gestión de servicios
 
-// ✅ Ruta de prueba para verificar que el servidor funciona
-app.get('/', (req, res) => {
-    res.send('🚀 API funcionando correctamente');
-});
-
-// ✅ Iniciar el servidor
-app.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en http://127.0.0.1:${PORT}`);
-});
+const PORT = process.env.PORT || 5002;
+app.listen(PORT, () => console.log(`🚀 Servidor corriendo en puerto ${PORT}`));

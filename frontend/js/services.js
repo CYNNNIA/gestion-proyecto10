@@ -1,97 +1,87 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-      alert("⚠️ Debes iniciar sesión como profesional.");
-      window.location.href = "login.html";
-      return;
-  }
+document.addEventListener("DOMContentLoaded", () => {
+    const serviceForm = document.getElementById("serviceForm");
+    const serviceList = document.getElementById("serviceList");
+    const token = localStorage.getItem("token");
 
-  const serviceForm = document.getElementById("serviceForm");
-  const serviceList = document.getElementById("serviceList");
+    if (!token) {
+        alert("⚠️ Debes iniciar sesión.");
+        window.location.href = "login.html";
+        return;
+    }
 
-  // ✅ Función para cargar los servicios del profesional
-  async function loadServices() {
-      try {
-          const response = await fetch("http://127.0.0.1:5002/api/services/my-services", {
-              method: "GET",
-              headers: { "Authorization": `Bearer ${token}` }
-          });
+    // ✅ Función para cargar servicios creados
+    async function loadServices() {
+        try {
+            const response = await fetch("http://127.0.0.1:5002/api/services");
+            const data = await response.json();
+    
+            console.log("📌 Datos recibidos del backend:", data);
+    
+            if (!Array.isArray(data)) {
+                console.error("❌ Error: El backend no devolvió una lista de servicios.", data);
+                return;
+            }
+    
+            const serviceList = document.getElementById("serviceList");
+            serviceList.innerHTML = "";
+    
+            data.forEach(service => {
+                const li = document.createElement("li");
+                li.innerText = `${service.name} - ${service.price}€`;
+                serviceList.appendChild(li);
+            });
+    
+        } catch (error) {
+            console.error("❌ Error obteniendo servicios:", error);
+        }
+    }
 
-          const data = await response.json();
-          if (!response.ok) throw new Error(data.message);
+    // ✅ Función para crear un servicio
+    serviceForm?.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-          serviceList.innerHTML = "";
-          data.forEach(service => {
-              const li = document.createElement("li");
-              li.innerText = `${service.name} - ${service.price}€`;
+        // 🔹 Obtener valores del formulario
+        const name = document.getElementById("serviceName").value.trim();
+        const description = document.getElementById("serviceDescription").value.trim();
+        const price = document.getElementById("servicePrice").value.trim();
+        const category = document.getElementById("serviceCategory").value;
 
-              // Botón para eliminar servicio
-              const deleteBtn = document.createElement("button");
-              deleteBtn.innerText = "Eliminar";
-              deleteBtn.onclick = () => deleteService(service._id);
-              li.appendChild(deleteBtn);
+        // ✅ Depuración: Verificar si los valores están llegando correctamente
+        console.log("📌 Datos del servicio antes de enviar:", { name, description, price, category });
 
-              serviceList.appendChild(li);
-          });
-      } catch (error) {
-          console.error("❌ Error obteniendo servicios:", error);
-          alert("⚠️ No se pudieron cargar los servicios.");
-      }
-  }
+        // ✅ Validar que los campos no estén vacíos antes de enviar la solicitud
+        if (!name || !description || !price || !category) {
+            alert("⚠️ Todos los campos son obligatorios.");
+            return;
+        }
 
-  // ✅ Función para crear un nuevo servicio
-  serviceForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+        // 🔹 Construcción del objeto con los datos
+        const serviceData = {
+            name,
+            description,
+            price: parseFloat(price), // Asegurar que el precio es un número
+            category
+        };
 
-      const serviceData = {
-          name: document.getElementById("serviceName").value,
-          description: document.getElementById("serviceDescription").value,
-          price: document.getElementById("servicePrice").value,
-          category: document.getElementById("serviceCategory").value,
-          availableDates: [] // Esto lo puedes cambiar si agregas fechas en el formulario
-      };
+        try {
+            const response = await fetch("http://127.0.0.1:5002/api/services/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify(serviceData),
+            });
 
-      try {
-          const response = await fetch("http://127.0.0.1:5002/api/services/create", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`
-              },
-              body: JSON.stringify(serviceData)
-          });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message);
 
-          const data = await response.json();
-          if (!response.ok) throw new Error(data.message);
+            alert("✅ Servicio creado con éxito.");
+            serviceForm.reset();
+            loadServices();
 
-          alert("✅ Servicio creado con éxito");
-          serviceForm.reset();
-          loadServices();
-      } catch (error) {
-          console.error("❌ Error creando servicio:", error);
-          alert("⚠️ No se pudo crear el servicio.");
-      }
-  });
+        } catch (error) {
+            console.error("❌ Error creando servicio:", error);
+            alert(`⚠️ ${error.message}`);
+        }
+    });
 
-  // ✅ Función para eliminar un servicio
-  async function deleteService(serviceId) {
-      try {
-          const response = await fetch(`http://127.0.0.1:5002/api/services/${serviceId}`, {
-              method: "DELETE",
-              headers: { "Authorization": `Bearer ${token}` }
-          });
-
-          const data = await response.json();
-          if (!response.ok) throw new Error(data.message);
-
-          alert("✅ Servicio eliminado");
-          loadServices();
-      } catch (error) {
-          console.error("❌ Error eliminando servicio:", error);
-          alert("⚠️ No se pudo eliminar el servicio.");
-      }
-  }
-
-  // 🔄 Cargar servicios al iniciar
-  loadServices();
+    loadServices();
 });

@@ -1,80 +1,73 @@
-const API_URL = "http://127.0.0.1:5002/api/auth"; // ✅ URL base del backend
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("🚀 auth.js cargado correctamente");
 
-document.addEventListener('DOMContentLoaded', () => {
-    const authForm = document.getElementById('authForm');
-    const authTitle = document.getElementById('authTitle');
-    const authSubmitBtn = document.getElementById('authSubmitBtn');
-    const authToggleText = document.getElementById('authToggleText');
-    const errorMessage = document.getElementById('errorMessage');
+    // Obtener elementos del DOM
+    const authForm = document.getElementById("authForm");
+    const authSubmitBtn = document.getElementById("authSubmitBtn");
+    const authTitle = document.getElementById("authTitle");
+    const authToggleText = document.getElementById("authToggleText");
 
-    let isRegistering = false;
-
-    function updateAuthUI() {
-        authTitle.innerText = isRegistering ? "Registro" : "Iniciar Sesión";
-        authSubmitBtn.innerText = isRegistering ? "Registrarse" : "Ingresar";
-
-        authToggleText.innerHTML = isRegistering
-            ? '¿Ya tienes cuenta? <a href="#" id="toggleAuth">Inicia sesión aquí</a>'
-            : '¿No tienes cuenta? <a href="#" id="toggleAuth">Regístrate aquí</a>';
-
-        document.getElementById('nameField').style.display = isRegistering ? "block" : "none";
-        document.getElementById('roleField').style.display = isRegistering ? "block" : "none";
-
-        document.getElementById('toggleAuth').addEventListener('click', (e) => {
-            e.preventDefault();
-            isRegistering = !isRegistering;
-            updateAuthUI();
-        });
+    if (!authForm || !authSubmitBtn) {
+        console.error("❌ Error: No se encontraron elementos en el DOM. Revisa los IDs en el HTML.");
+        return;
     }
 
-    updateAuthUI();
+    // Verificar si estamos en login.html o register.html
+    const isRegisterPage = window.location.pathname.includes("register.html");
 
-    authForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errorMessage.style.display = "none"; // Ocultar errores previos
+    if (isRegisterPage) {
+        authTitle.textContent = "Registrarse";
+        authSubmitBtn.textContent = "Registrarse";
+    } else {
+        authTitle.textContent = "Iniciar Sesión";
+        authSubmitBtn.textContent = "Ingresar";
+    }
 
-        const email = document.getElementById('authEmail').value.trim();
-        const password = document.getElementById('authPassword').value.trim();
-        const nameField = document.getElementById('authName');
-        const roleField = document.getElementById('authRole');
+    // Manejo del formulario de autenticación
+    authForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-        const name = nameField ? nameField.value.trim() : null;
-        const role = roleField ? roleField.value : "cliente"; 
+        const name = document.getElementById("authName")?.value.trim();
+        const email = document.getElementById("authEmail").value.trim();
+        const password = document.getElementById("authPassword").value.trim();
+        const role = document.getElementById("authRole")?.value;
 
-        const endpoint = isRegistering ? `${API_URL}/register` : `${API_URL}/login`;
-        const bodyData = isRegistering ? { name, email, password, role } : { email, password };
+        if (!email || !password || (isRegisterPage && (!name || !role))) {
+            alert("⚠️ Todos los campos son obligatorios.");
+            return;
+        }
+
+        const endpoint = isRegisterPage ? "/auth/register" : "/auth/login";
+        const requestBody = isRegisterPage
+            ? { name, email, password, role }
+            : { email, password };
 
         try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bodyData),
+            const response = await fetch(`http://127.0.0.1:5002/api${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody),
             });
 
             const data = await response.json();
-            console.log("🔹 Respuesta del servidor:", data);
+            if (!response.ok) throw new Error(data.message || "Error en la solicitud.");
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Error en la autenticación');
+            // Guardar datos en LocalStorage
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("userName", data.user.name);
+            localStorage.setItem("userEmail", data.user.email);
+            localStorage.setItem("userRole", data.user.role);
+
+            // Redirigir según el rol
+            if (data.user.role === "profesional") {
+                window.location.href = "dashboard-profesional.html";
+            } else {
+                window.location.href = "cliente.html"; // ✅
             }
 
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('userName', data.user?.name || "Usuario");
-                localStorage.setItem('userEmail', data.user?.email || "No disponible");
-                localStorage.setItem('userRole', data.user?.role || "cliente");
-
-                console.log("✅ Usuario guardado en localStorage:", {
-                    name: data.user?.name,
-                    email: data.user?.email,
-                    role: data.user?.role
-                });
-
-                window.location.href = "profile.html"; 
-            }
         } catch (error) {
-            errorMessage.innerText = `⚠️ ${error.message}`;
-            errorMessage.style.display = "block";
+            console.error("❌ Error en autenticación:", error);
+            alert(error.message);
         }
     });
 });

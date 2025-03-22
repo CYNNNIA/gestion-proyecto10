@@ -3,28 +3,34 @@ const Service = require('../models/Service');
 // 📌 Crear un servicio (solo profesionales pueden hacerlo)
 exports.createService = async (req, res) => {
     try {
-        const { name, description, price, availableDates, category } = req.body;
+        const { name, description, price, category } = req.body;
         const professionalId = req.user.id;
 
-        if (!name || !description || !price || !availableDates || !category) {
-            return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+        // ✅ Depuración: Mostrar en consola qué datos llegan
+        console.log("📌 Datos recibidos en el backend:", { name, description, price, category, professionalId });
+
+        if (!name || !description || !price || !category || !professionalId) {
+            return res.status(400).json({ message: '⚠️ Todos los campos son obligatorios' });
+        }
+
+        if (typeof price !== "number") {
+            return res.status(400).json({ message: '⚠️ El precio debe ser un número válido' });
         }
 
         const newService = new Service({
             name,
             description,
             price,
-            availableDates,
             category,
             professional: professionalId
         });
 
         await newService.save();
-        res.status(201).json({ message: 'Servicio creado con éxito', service: newService });
+        res.status(201).json({ message: '✅ Servicio creado con éxito', service: newService });
 
     } catch (error) {
         console.error('❌ Error al crear el servicio:', error);
-        res.status(500).json({ message: 'Error en el servidor' });
+        res.status(500).json({ message: '⚠️ Error en el servidor' });
     }
 };
 

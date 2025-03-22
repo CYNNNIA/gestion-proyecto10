@@ -1,14 +1,16 @@
 const mongoose = require('mongoose');
 
 const serviceSchema = new mongoose.Schema({
-    name: { type: String, required: true, trim: true },
+    name: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
-    professional: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Relación con el profesional que ofrece el servicio
-    availableDates: [{ type: Date, required: true }], // Fechas disponibles
-    category: { type: String, required: true, enum: ['masaje', 'entrenamiento', 'nutrición', 'terapia', 'otros'] },
-    createdAt: { type: Date, default: Date.now }
+    category: { 
+        type: String, 
+        enum: ['Belleza', 'Fitness', 'Educación', 'Tecnología', 'Salud'], // ✅ Categoría "Salud" agregada
+        required: true 
+    },
+    availableDates: { type: [Date], required: true },
+    professional: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
-const Service = mongoose.model('Service', serviceSchema);
-module.exports = Service;
+module.exports = mongoose.model('Service', serviceSchema);

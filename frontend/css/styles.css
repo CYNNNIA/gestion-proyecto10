@@ -1,15 +1,25 @@
-/* ✅ Estilos generales */
-body {
-  font-family: Arial, sans-serif;
+/* 🌟 Reset y Estilos Generales */
+* {
   margin: 0;
   padding: 0;
-  text-align: center;
+  box-sizing: border-box;
 }
 
-/* 🏠 Estilos de la barra de navegación */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f8f9fa;
+  text-align: center;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 🏠 Navbar */
 nav {
-  background-color: #333;
+  background-color: #007bff;
   padding: 15px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-links {
@@ -27,58 +37,100 @@ nav {
 .nav-links a {
   color: white;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
-.btn-login {
-  background-color: #ff6600;
-  padding: 10px 15px;
-  border-radius: 5px;
-  color: white;
+.nav-links a:hover {
+  color: #ffcc00;
 }
 
-/* 🌟 Sección principal */
-.hero {
-  background-color: #f4f4f4;
-  padding: 50px 20px;
-}
-
-.hero h1 {
-  font-size: 28px;
-}
-
+/* 🎨 Botones Globales */
 .btn-primary {
   display: inline-block;
-  margin-top: 15px;
   padding: 10px 20px;
   background-color: #28a745;
   color: white;
   text-decoration: none;
   border-radius: 5px;
+  font-size: 16px;
+  transition: background 0.3s ease;
 }
 
-/* 📝 Información */
-.info-section {
-  padding: 40px 20px;
+.btn-primary:hover {
+  background-color: #218838;
 }
 
-.info-container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
+.btn-secondary {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #ff6600;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background 0.3s ease;
 }
 
-.info-box {
-  background: #ddd;
+.btn-secondary:hover {
+  background-color: #e65c00;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* 📌 Formulario General */
+form {
+  background: white;
   padding: 20px;
-  width: 200px;
+  margin: 20px auto;
+  width: 50%;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 📌 Pie de página */
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* 📋 Tarjetas de Contenido */
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 500px;
+  text-align: center;
+}
+
+.card h3 {
+  color: #007bff;
+}
+
+/* 📌 Footer */
 footer {
   background-color: #222;
   color: white;
+  text-align: center;
   padding: 10px;
-  margin-top: 20px;
+  margin-top: auto;
 }
