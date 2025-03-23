@@ -1,16 +1,16 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const serviceSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    description: { type: String, required: true },
-    price: { type: Number, required: true },
-    category: { 
-        type: String, 
-        enum: ['Belleza', 'Fitness', 'Educación', 'Tecnología', 'Salud'], // ✅ Categoría "Salud" agregada
-        required: true 
-    },
-    availableDates: { type: [Date], required: true },
-    professional: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
-});
+  name: { type: String, required: true },
+  description: String,
+  price: { type: Number, required: true },
+  category: String,
+  availability: Date,
+  professional: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+}, { timestamps: true });
 
-module.exports = mongoose.model('Service', serviceSchema);
+module.exports = mongoose.model("Service", serviceSchema);

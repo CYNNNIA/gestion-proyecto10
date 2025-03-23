@@ -6,17 +6,18 @@ exports.createService = async (req, res) => {
         const { name, description, price, category } = req.body;
         const professionalId = req.user.id;
 
-        // ✅ Depuración: Mostrar en consola qué datos llegan
         console.log("📌 Datos recibidos en el backend:", { name, description, price, category, professionalId });
 
+        // Validar campos
         if (!name || !description || !price || !category || !professionalId) {
-            return res.status(400).json({ message: '⚠️ Todos los campos son obligatorios' });
+            return res.status(400).json({ message: '⚠️ Todos los campos son obligatorios.' });
         }
 
         if (typeof price !== "number") {
-            return res.status(400).json({ message: '⚠️ El precio debe ser un número válido' });
+            return res.status(400).json({ message: '⚠️ El precio debe ser un número válido.' });
         }
 
+        // Crear el nuevo servicio
         const newService = new Service({
             name,
             description,
@@ -26,11 +27,15 @@ exports.createService = async (req, res) => {
         });
 
         await newService.save();
-        res.status(201).json({ message: '✅ Servicio creado con éxito', service: newService });
+
+        res.status(201).json({
+            message: '✅ Servicio creado con éxito.',
+            service: newService
+        });
 
     } catch (error) {
         console.error('❌ Error al crear el servicio:', error);
-        res.status(500).json({ message: '⚠️ Error en el servidor' });
+        res.status(500).json({ message: '⚠️ Error en el servidor al crear el servicio.' });
     }
 };
 
@@ -41,20 +46,19 @@ exports.getAllServices = async (req, res) => {
         res.json(services);
     } catch (error) {
         console.error('❌ Error al obtener los servicios:', error);
-        res.status(500).json({ message: 'Error en el servidor' });
+        res.status(500).json({ message: '⚠️ Error en el servidor al obtener los servicios.' });
     }
 };
 
-// 📌 Obtener servicios de un profesional específico
+// 📌 Obtener servicios del profesional autenticado
 exports.getServicesByProfessional = async (req, res) => {
     try {
         const professionalId = req.user.id;
         const services = await Service.find({ professional: professionalId });
-
         res.json({ services });
     } catch (error) {
         console.error('❌ Error al obtener los servicios del profesional:', error);
-        res.status(500).json({ message: 'Error en el servidor' });
+        res.status(500).json({ message: '⚠️ Error en el servidor al obtener tus servicios.' });
     }
 };
 
@@ -65,18 +69,18 @@ exports.deleteService = async (req, res) => {
         const service = await Service.findById(id);
 
         if (!service) {
-            return res.status(404).json({ message: 'Servicio no encontrado' });
+            return res.status(404).json({ message: '⚠️ Servicio no encontrado.' });
         }
 
         if (service.professional.toString() !== req.user.id) {
-            return res.status(403).json({ message: 'No tienes permiso para eliminar este servicio' });
+            return res.status(403).json({ message: '⚠️ No tienes permiso para eliminar este servicio.' });
         }
 
         await service.deleteOne();
-        res.json({ message: 'Servicio eliminado con éxito' });
+        res.json({ message: '✅ Servicio eliminado con éxito.' });
 
     } catch (error) {
         console.error('❌ Error al eliminar el servicio:', error);
-        res.status(500).json({ message: 'Error en el servidor' });
+        res.status(500).json({ message: '⚠️ Error en el servidor al eliminar el servicio.' });
     }
 };

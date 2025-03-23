@@ -1,34 +1,68 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Profesional</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Profesional</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/dashboard-profesional.css">
 </head>
 <body>
-    <nav id="navbar"></nav>
+  <nav id="navbar"></nav>
 
-    <div class="container">
-        <h1>Bienvenido, <span id="professionalName">Profesional</span></h1>
+  <main class="dashboard-container">
+    <section class="bienvenida">
+      <h1>Bienvenido, <span id="professionalName">profesional</span></h1>
+    </section>
 
-        <section class="services-section">
-            <h2>Mis Servicios</h2>
-            <button id="addServiceBtn" class="btn-primary">Añadir Servicio</button>
-            <ul id="serviceList"></ul>
-        </section>
+    <section class="crear-servicio">
+      <h2>Crear Servicio</h2>
+      <form id="serviceForm">
+        <div class="input-group">
+          <label for="serviceName">Nombre del servicio:</label>
+          <input type="text" id="serviceName" required />
+        </div>
 
-        <section class="calendar-section">
-            <h2>Mi Disponibilidad</h2>
-            <input type="datetime-local" id="availabilityPicker">
-            <button id="saveAvailabilityBtn" class="btn-secondary">Guardar Disponibilidad</button>
-            <ul id="availabilityList"></ul>
-        </section>
-    </div>
+        <div class="input-group">
+          <label for="serviceDescription">Descripción:</label>
+          <textarea id="serviceDescription" required></textarea>
+        </div>
 
-    <footer id="footer"></footer>
+        <div class="input-group">
+          <label for="servicePrice">Precio (€):</label>
+          <input type="number" id="servicePrice" required />
+        </div>
 
-    <script src="js/layout.js"></script>
-    <script src="js/dashboard-profesional.js"></script>
+        <div class="input-group">
+          <label for="serviceCategory">Categoría:</label>
+          <select id="serviceCategory" required>
+            <option value="">Selecciona una</option>
+            <option value="Maquillaje">Maquillaje</option>
+            <option value="Peluquería">Peluquería</option>
+            <option value="Uñas">Uñas</option>
+            <option value="Masajes">Masajes</option>
+            <option value="Otros">Otros</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="availabilityPicker">Fecha y hora disponibles:</label>
+          <input type="datetime-local" id="availabilityPicker" required />
+        </div>
+
+        <button type="submit" class="btn-primary">Crear Servicio</button>
+      </form>
+    </section>
+
+    <section class="servicios-lista">
+      <h2>Mis Servicios</h2>
+      <ul id="serviceList"></ul>
+    </section>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <script src="js/layout.js"></script>
+  <script src="js/dashboard-profesional.js"></script>
 </body>
 </html>
