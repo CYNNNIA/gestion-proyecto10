@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const userRoutes = require('./routes/userRoutes');
+const availabilityRoutes = require('./routes/availabilityRoutes'); // ✅ Añádelo
 
 dotenv.config();
 connectDB();
@@ -22,6 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/availability', availabilityRoutes); // ✅ Ya está bien así
 
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => console.log(`🚀 Servidor corriendo en puerto ${PORT}`));

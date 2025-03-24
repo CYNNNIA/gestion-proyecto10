@@ -48,7 +48,11 @@
         <div class="input-group">
           <label for="availabilityPicker">Fecha y hora disponibles:</label>
           <input type="datetime-local" id="availabilityPicker" required />
+          <button type="button" id="saveAvailabilityBtn" class="btn-secondary">Guardar Disponibilidad</button>
         </div>
+
+        <!-- ✅ Aquí añadimos el listado de disponibilidad -->
+        <ul id="availabilityList"></ul>
 
         <button type="submit" class="btn-primary">Crear Servicio</button>
       </form>

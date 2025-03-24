@@ -1,20 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Reservas</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mis Reservas</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/bookings.css">
 </head>
 <body>
-  
-    
-    <main>
-        <!-- Contenido principal de la página -->
-    </main>
-    
-    <script src="js/layout.js"></script>
-    <script src="js/cliente.js"></script>
+  <!-- Navbar dinámica -->
+  <nav id="navbar"></nav>
 
+  <main class="container">
+    <section class="reserva-formulario">
+      <h1>Reservar un Servicio</h1>
+      <form id="bookingForm">
+        <div class="input-group">
+          <label for="type">Servicio:</label>
+          <select id="type" required>
+            <option value="">Selecciona un servicio</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="date">Fecha:</label>
+          <select id="date" required>
+            <option value="">Selecciona una fecha</option>
+          </select>
+          <p id="dateError" class="error-message" style="display: none;"></p>
+        </div>
+
+        <div class="input-group">
+          <label for="time">Hora:</label>
+          <select id="time" required>
+            <option value="">Selecciona una hora</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-primary">Reservar</button>
+      </form>
+    </section>
+
+    <section class="mis-reservas">
+      <h2>Mis Reservas</h2>
+      <ul id="listaReservas">
+        <!-- Reservas inyectadas aquí -->
+      </ul>
+    </section>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <script src="js/layout.js"></script>
+  <script src="js/bookings.js"></script>
 </body>
 </html>
