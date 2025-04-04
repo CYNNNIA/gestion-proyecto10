@@ -61,15 +61,8 @@ exports.login = async (req, res) => {
 // 🔹 Obtener perfil del usuario autenticado
 exports.getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password'); // Excluir la contraseña
-
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    res.json(user);
+    res.json({ name: req.user.name, email: req.user.email, role: req.user.role });
   } catch (error) {
-    console.error("❌ Error obteniendo perfil:", error);
-    res.status(500).json({ message: 'Error en el servidor al obtener el perfil' });
+    res.status(500).json({ message: "Error al obtener perfil" });
   }
 };

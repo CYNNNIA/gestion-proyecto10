@@ -1,3 +1,5 @@
+// backend/controllers/bookingController.js
+
 const Booking = require('../models/Booking');
 const Service = require('../models/Service');
 const Availability = require('../models/Availability');
@@ -53,7 +55,6 @@ const createBooking = async (req, res) => {
       message: "✅ Reserva creada con éxito.",
       booking: newBooking,
     });
-
   } catch (error) {
     console.error("❌ Error creando reserva:", error);
     res.status(500).json({ message: "⚠️ Error del servidor." });
@@ -62,14 +63,14 @@ const createBooking = async (req, res) => {
 
 // ✅ Obtener reservas del usuario autenticado
 const getBookingsByUser = async (req, res) => {
-    try {
-      const bookings = await Booking.find({ user: req.user.id }).populate("service");
-      res.json(bookings);
-    } catch (error) {
-      console.error("❌ Error obteniendo reservas:", error);
-      res.status(500).json({ message: "⚠️ Error del servidor." });
-    }
-  };
+  try {
+    const bookings = await Booking.find({ user: req.user.id }).populate("service");
+    res.json(bookings);
+  } catch (error) {
+    console.error("❌ Error obteniendo reservas:", error);
+    res.status(500).json({ message: "⚠️ Error del servidor." });
+  }
+};
 
 // ✅ Obtener todas las reservas (admin)
 const getAllBookings = async (req, res) => {
@@ -84,6 +85,23 @@ const getAllBookings = async (req, res) => {
     res.json(bookings);
   } catch (error) {
     console.error("❌ Error obteniendo todas las reservas:", error);
+    res.status(500).json({ message: "⚠️ Error del servidor." });
+  }
+};
+
+// ✅ Obtener reservas para el profesional autenticado
+const getBookingsForProfessional = async (req, res) => {
+  try {
+    const services = await Service.find({ professional: req.user.id });
+    const serviceIds = services.map(s => s._id);
+
+    const bookings = await Booking.find({ service: { $in: serviceIds } })
+      .populate('user', 'name email')
+      .populate('service', 'name');
+
+    res.json(bookings);
+  } catch (error) {
+    console.error("❌ Error obteniendo reservas del profesional:", error);
     res.status(500).json({ message: "⚠️ Error del servidor." });
   }
 };
@@ -104,7 +122,6 @@ const cancelBooking = async (req, res) => {
 
     await booking.deleteOne();
     res.json({ message: "✅ Reserva cancelada con éxito." });
-
   } catch (error) {
     console.error("❌ Error cancelando la reserva:", error);
     res.status(500).json({ message: "⚠️ Error del servidor." });
@@ -116,4 +133,5 @@ module.exports = {
   getBookingsByUser,
   getAllBookings,
   cancelBooking,
+  getBookingsForProfessional,
 };

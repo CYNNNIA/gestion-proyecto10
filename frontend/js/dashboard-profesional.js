@@ -1,168 +1,162 @@
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("🚀 dashboard-profesional.js cargado");
-  
-    const serviceForm = document.getElementById("serviceForm");
-    const serviceList = document.getElementById("serviceList");
-    const availabilityInput = document.getElementById("availabilityPicker");
-    const saveAvailabilityBtn = document.getElementById("saveAvailabilityBtn");
-    const availabilityList = document.getElementById("availabilityList");
-  
-    const token = localStorage.getItem("token");
-  
-    if (!token) {
-      alert("⚠️ Debes iniciar sesión.");
-      window.location.href = "login.html";
-      return;
-    }
-  
-    // ✅ Cargar servicios del profesional
-    async function loadServices() {
-      try {
-        const response = await fetch("http://127.0.0.1:5002/api/services/my-services", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
-        const data = await response.json();
-        if (!Array.isArray(data.services)) {
-          console.error("❌ El backend no devolvió una lista válida:", data);
-          return;
-        }
-  
-        serviceList.innerHTML = "";
-  
-        data.services.forEach(service => {
-          const li = document.createElement("li");
-          li.innerHTML = `
-            <strong>${service.name}</strong> - ${service.price}€<br>
-            <em>${service.category}</em><br>
-            ${service.description}<br>
-            <button data-id="${service._id}" class="btn-delete">Eliminar</button>
-          `;
-  
-          li.querySelector("button").addEventListener("click", async () => {
-            const confirmDelete = confirm("¿Seguro que quieres eliminar este servicio?");
-            if (!confirmDelete) return;
-  
-            try {
-              const res = await fetch(`http://127.0.0.1:5002/api/services/${service._id}`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
-              });
-  
-              const result = await res.json();
-              if (!res.ok) throw new Error(result.message);
-  
-              alert("✅ Servicio eliminado.");
-              loadServices();
-            } catch (error) {
-              console.error("❌ Error al eliminar servicio:", error);
-              alert(`⚠️ ${error.message}`);
-            }
-          });
-  
-          serviceList.appendChild(li);
-        });
-      } catch (error) {
-        console.error("❌ Error obteniendo servicios:", error);
-      }
-    }
-  
-    // ✅ Crear nuevo servicio
-    serviceForm?.addEventListener("submit", async (event) => {
-      event.preventDefault();
-  
-      const name = document.getElementById("serviceName").value.trim();
-      const description = document.getElementById("serviceDescription").value.trim();
-      const price = parseFloat(document.getElementById("servicePrice").value);
-      const category = document.getElementById("serviceCategory").value;
-  
-      if (!name || !description || !price || !category) {
-        alert("⚠️ Todos los campos son obligatorios.");
-        return;
-      }
-  
-      const serviceData = { name, description, price, category };
-  
-      try {
-        const response = await fetch("http://127.0.0.1:5002/api/services/create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(serviceData),
-        });
-  
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message);
-  
-        alert("✅ Servicio creado con éxito.");
-        serviceForm.reset();
-        loadServices();
-      } catch (error) {
-        console.error("❌ Error creando servicio:", error);
-        alert(`⚠️ ${error.message}`);
-      }
-    });
-  
-    // ✅ Guardar disponibilidad
-    saveAvailabilityBtn?.addEventListener("click", async () => {
-      const dateTime = availabilityInput.value;
-  
-      if (!dateTime) {
-        alert("⚠️ Debes seleccionar una fecha y hora.");
-        return;
-      }
-  
-      try {
-        const response = await fetch("http://127.0.0.1:5002/api/availability/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ dateTime }),
-        });
-  
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message);
-  
-        alert("✅ Disponibilidad guardada.");
-        availabilityInput.value = "";
-        loadAvailability();
-      } catch (error) {
-        console.error("❌ Error al guardar disponibilidad:", error);
-        alert("⚠️ No se pudo guardar la disponibilidad.");
-      }
-    });
-  
-    // ✅ Cargar disponibilidad
-    async function loadAvailability() {
-      try {
-        const response = await fetch("http://127.0.0.1:5002/api/availability/my-availability", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
-        const data = await response.json();
-        if (!Array.isArray(data)) {
-          console.error("❌ No se recibió una lista de disponibilidad:", data);
-          return;
-        }
-  
-        availabilityList.innerHTML = "";
-  
-        data.forEach(entry => {
-          const li = document.createElement("li");
-          const date = new Date(entry.dateTime).toLocaleString("es-ES");
-          li.textContent = date;
-          availabilityList.appendChild(li);
-        });
-      } catch (error) {
-        console.error("❌ Error al cargar disponibilidad:", error);
-      }
-    }
-  
-    // 🚀 Cargar servicios y disponibilidad al inicio
-    loadServices();
-    loadAvailability();
+// frontend/js/dashboard-profesional.js
+
+const token = localStorage.getItem("token");
+if (!token) {
+  alert("⚠️ Debes iniciar sesión.");
+  window.location.href = "login.html";
+}
+
+const serviceForm = document.getElementById("serviceForm");
+const nameInput = document.getElementById("serviceName");
+const descInput = document.getElementById("serviceDescription");
+const priceInput = document.getElementById("servicePrice");
+const categoryInput = document.getElementById("serviceCategory");
+const imageInput = document.getElementById("serviceImage");
+const availabilityInput = document.getElementById("availabilityPicker");
+const serviceList = document.getElementById("serviceList");
+const reservasList = document.getElementById("listaReservasRecibidas");
+const filtroServicio = document.getElementById("filtroServicio");
+const professionalName = document.getElementById("professionalName");
+
+let reservas = [];
+
+// Navbar dinámica
+fetch("components/navbar.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("navbar").innerHTML = html;
+    const links = document.querySelector("#navbar .nav-links");
+    links.innerHTML = `
+      <a href="dashboard-profesional.html">Mi Panel</a>
+      <a href="#" onclick="logout()">Cerrar Sesión</a>
+    `;
   });
+
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "login.html";
+}
+
+async function getProfile() {
+  const res = await fetch("http://localhost:5002/api/auth/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("Perfil inválido");
+  const data = await res.json();
+  professionalName.textContent = data.name;
+}
+
+async function loadServices() {
+  const res = await fetch("http://localhost:5002/api/services/my-services", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const services = await res.json();
+
+  if (!Array.isArray(services)) throw new Error("Respuesta no válida");
+
+  serviceList.innerHTML = "";
+  filtroServicio.innerHTML = '<option value="">Todos los servicios</option>';
+
+  services.forEach(s => {
+    const div = document.createElement("div");
+    div.classList.add("card");
+    div.innerHTML = `
+      <h3>${s.name}</h3>
+      <p>${s.description}</p>
+      <p>${s.category} - ${Number(s.price).toFixed(2)}€</p>
+      ${s.image ? `<img src="http://localhost:5002${s.image}" width="150" />` : ""}
+      <ul>
+        ${(s.availabilities || []).map(a => `<li>${new Date(a).toLocaleString()}</li>`).join("")}
+      </ul>
+      <button onclick="deleteService('${s._id}')">Eliminar</button>
+      <button onclick="editService('${s._id}')">Editar</button>
+    `;
+    serviceList.appendChild(div);
+
+    const opt = document.createElement("option");
+    opt.value = s._id;
+    opt.textContent = s.name;
+    filtroServicio.appendChild(opt);
+  });
+}
+
+async function loadReservas() {
+  const res = await fetch("http://localhost:5002/api/bookings/professional", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  reservas = await res.json();
+  showReservas();
+}
+
+function showReservas() {
+  const selectedId = filtroServicio.value;
+  const filtradas = selectedId ? reservas.filter(r => r.service._id === selectedId) : reservas;
+  reservasList.innerHTML = "";
+  if (filtradas.length === 0) {
+    reservasList.innerHTML = "<li>No hay reservas.</li>";
+    return;
+  }
+  filtradas.forEach(r => {
+    const fecha = new Date(r.date).toLocaleString("es-ES");
+    const li = document.createElement("li");
+    li.textContent = `${r.service.name} - ${fecha} | Cliente: ${r.user.name} (${r.user.email})`;
+    reservasList.appendChild(li);
+  });
+}
+
+filtroServicio.addEventListener("change", showReservas);
+
+serviceForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = nameInput.value.trim();
+  const description = descInput.value.trim();
+  const price = parseFloat(priceInput.value);
+  const category = categoryInput.value;
+  const availability = availabilityInput.value;
+  const image = imageInput.files[0];
+
+  if (!name || !description || isNaN(price) || !category || !availability || !image) {
+    return alert("⚠️ Todos los campos son obligatorios.");
+  }
+
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("price", price);
+  formData.append("category", category);
+  formData.append("availability", availability);
+  formData.append("image", image);
+
+  const res = await fetch("http://localhost:5002/api/services/create", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  const result = await res.json();
+  if (!res.ok) return alert("❌ Error al crear servicio: " + result.message);
+
+  alert("✅ Servicio creado con éxito.");
+  serviceForm.reset();
+  loadServices();
+});
+
+async function deleteService(id) {
+  if (!confirm("¿Eliminar este servicio?")) return;
+  await fetch(`http://localhost:5002/api/services/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  loadServices();
+}
+
+(async () => {
+  try {
+    await getProfile();
+    await loadServices();
+    await loadReservas();
+  } catch (err) {
+    console.error("❌ Error:", err);
+  }
+})();

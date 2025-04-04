@@ -1,18 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
-const { createService, getAllServices, getServicesByProfessional, deleteService } = require('../controllers/serviceController');
+const multer = require('multer');
+const path = require('path');
+const {
+  createService,
+  getAllServices,
+  getServicesByProfessional,
+  deleteService,
+} = require('../controllers/serviceController');
 
-// 📌 Ruta para obtener todos los servicios
-router.get('/', getAllServices);
+// Configurar Multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+const upload = multer({ storage });
 
-// 📌 Ruta para obtener los servicios de un profesional específico
+// Rutas
+router.post('/create', authMiddleware, upload.single('image'), createService);
 router.get('/my-services', authMiddleware, getServicesByProfessional);
-
-// 📌 Ruta para crear un nuevo servicio (solo profesionales autenticados)
-router.post('/create', authMiddleware, createService);
-
-// 📌 Ruta para eliminar un servicio (solo el profesional que lo creó puede hacerlo)
+router.get('/', getAllServices);
 router.delete('/:id', authMiddleware, deleteService);
 
 module.exports = router;
