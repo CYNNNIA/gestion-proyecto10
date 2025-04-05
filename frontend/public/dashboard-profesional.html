@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GlowUp Studio - Panel Profesional</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/dashboard-profesional.css" />
+</head>
+<body>
+  <header class="app-header">
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="30" cy="30" r="28" stroke="#9C6B4F" stroke-width="3" fill="#fff5f0"/>
+      <path d="M30 15L34 28H26L30 15Z" fill="#9C6B4F"/>
+      <path d="M30 45C33 45 36 42 36 39C36 36 33 33 30 33C27 33 24 36 24 39C24 42 27 45 30 45Z" fill="#9C6B4F"/>
+    </svg>
+    <div class="branding">
+      <h1 class="logo-text">Luméa</h1>
+      <p class="tagline">Agenda Belleza & Bienestar</p>
+    </div>
+  </header>
+  <nav class="navbar">
+    <div class="container">
+
+      <div class="nav-links">
+        <a href="dashboard-profesional.html">Mi Panel</a>
+        <a href="#" onclick="logout()">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dashboard-container">
+    <section class="bienvenida">
+      <h1>Bienvenido, <span id="professionalName">Profesional</span></h1>
+    </section>
+
+    <section class="crear-servicio">
+      <h2>Crear Servicio</h2>
+      <form id="serviceForm" enctype="multipart/form-data">
+        <input type="text" id="serviceName" placeholder="Nombre del servicio" required />
+        <textarea id="serviceDescription" placeholder="Descripción" required></textarea>
+        <input type="number" id="servicePrice" placeholder="Precio (€)" required />
+        <select id="serviceCategory" required>
+          <option value="">Selecciona categoría</option>
+          <option value="Maquillaje">Maquillaje</option>
+          <option value="Peluquería">Peluquería</option>
+          <option value="Uñas">Uñas</option>
+          <option value="Masajes">Masajes</option>
+          <option value="Otros">Otros</option>
+        </select>
+        <input type="file" id="serviceImage" name="image" accept="image/*" required />
+        <input type="datetime-local" id="availabilityInput" required />
+        <button type="submit">Crear Servicio</button>
+        <button type="button" id="cancelEditBtn" class="btn-secondary" style="display:none;">Cancelar edición</button>
+      </form>
+    </section>
+
+    <section class="servicios-lista">
+      <h2>Mis Servicios</h2>
+      <div id="serviceList"></div>
+      <div class="input-group">
+        <label for="availabilityInput">Disponibilidad:</label>
+        <input type="datetime-local" id="availabilityInput" />
+        <button type="button" id="addAvailabilityBtn" class="btn-secondary">Añadir Fecha</button>
+      </div>
+      <ul id="availabilityList"></ul>
+    </section>
+
+    <section class="reservas-recibidas">
+      <h2>Reservas Recibidas</h2>
+      <select id="filtroServicio">
+        <option value="">Todos los servicios</option>
+      </select>
+      <ul id="listaReservasRecibidas"></ul>
+    </section>
+  </main>
+
+  <footer id="footer">
+    <p>© 2025 GlowUp Studio</p>
+  </footer>
+
+  <script src="js/dashboard-profesional.js"></script>
+</body>
+</html>

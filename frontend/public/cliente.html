@@ -1,0 +1,31 @@
+<!-- public/cliente.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Panel - Cliente</title>
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <nav id="navbar"></nav>
+  <main class="auth-container">
+    <h1>¡Hola, Cliente!</h1>
+    <p>Desde aquí puedes gestionar tu perfil y tus reservas.</p>
+
+    <h2>Mi Perfil</h2>
+    <p><strong>Nombre:</strong> <span id="clientName">-</span></p>
+    <p><strong>Email:</strong> <span id="clientEmail">-</span></p>
+    <p><strong>Rol:</strong> <span id="clientRole">-</span></p>
+
+    <h2>Mis Reservas</h2>
+    <ul id="reservasList"><li>Cargando...</li></ul>
+
+    <h3>Próximamente...</h3>
+    <p>Aquí podrás editar tu información, marcar servicios favoritos y ver el historial de reservas.</p>
+  </main>
+  <footer id="footer"></footer>
+  <script src="js/layout.js"></script>
+  <script src="js/cliente.js"></script>
+</body>
+</html>

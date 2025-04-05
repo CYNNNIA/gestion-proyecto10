@@ -1,0 +1,151 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #fdf6f1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  color: #4d3a34;
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Contenedor principal */
+.auth-container {
+  width: 90%;
+  max-width: 400px;
+  margin: 80px auto 30px;
+  padding: 2rem;
+  background: #fffaf7;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Título */
+.auth-container h1 {
+  font-size: 26px;
+  margin-bottom: 1.2rem;
+  color: #a4715a;
+}
+
+/* Grupos de inputs */
+.input-group {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 5px;
+  display: block;
+  color: #5c443a;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d9cfc1;
+  border-radius: 8px;
+  background-color: #fffaf7;
+  font-size: 15px;
+}
+
+/* Botones */
+button, .btn-secondary {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button {
+  background-color: #b1725c;
+  color: white;
+}
+
+button:hover {
+  background-color: #995746;
+}
+
+.btn-secondary {
+  background-color: #a6978b;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #887c72;
+}
+
+/* Toggle entre login/registro */
+#authToggleText {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+#authToggleText a {
+  color: #b1725c;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#authToggleText a:hover {
+  text-decoration: underline;
+}
+
+/* Navbar */
+nav {
+  background-color: #9c6b4f;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.nav-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: #fff5f0;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: #ffe6d9;
+}
+
+/* Footer */
+footer {
+  margin-top: auto;
+  background-color: #3e2f2f;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+}

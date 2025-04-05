@@ -1,0 +1,96 @@
+/* public/css/landing.css */
+
+/* 🎨 Fuente moderna y neutra */
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  background-color: #fef9f5;
+  color: #5a463a;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 🧭 Header */
+.header {
+  background-color: #f1e4db;
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+  box-shadow: 0 2px 10px rgba(90, 70, 58, 0.1);
+}
+
+.logo {
+  font-size: 2.5rem;
+  color: #b2836d;
+  font-weight: 700;
+  margin: 0;
+}
+
+.tagline {
+  font-size: 1.1rem;
+  color: #7c675a;
+  margin-top: 0.3rem;
+}
+
+/* 🖼️ Main Container */
+.main-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 960px;
+  margin: auto;
+}
+
+.card {
+  background-color: #fffaf7;
+  border: 1px solid #e3d6cd;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(90, 70, 58, 0.08);
+  text-align: center;
+}
+
+.card h2 {
+  color: #a0705e;
+  margin-bottom: 1rem;
+}
+
+.card p {
+  color: #6d584b;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #b2836d;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #a4715a;
+}
+
+.btn.secondary {
+  background-color: #d4a69f;
+}
+
+.btn.secondary:hover {
+  background-color: #c78b81;
+}
+
+/* 📍 Footer */
+.footer {
+  text-align: center;
+  background-color: #eee2db;
+  color: #5a463a;
+  padding: 1rem;
+  font-size: 0.9rem;
+}

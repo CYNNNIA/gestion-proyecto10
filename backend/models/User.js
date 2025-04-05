@@ -1,3 +1,4 @@
+// models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -8,20 +9,13 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['cliente', 'profesional'], default: 'cliente' }
 });
 
-// Middleware para encriptar la contraseña antes de guardarla en la BD
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
 
-// Método para comparar contraseñas al iniciar sesión
-userSchema.methods.comparePassword = async function (password) {
+userSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
 

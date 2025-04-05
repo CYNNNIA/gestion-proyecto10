@@ -1,0 +1,63 @@
+<!-- public/register.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrarse - Luméa</title>
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+<body>
+  <header class="header">
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="30" cy="30" r="28" stroke="#9C6B4F" stroke-width="3" fill="#fff5f0"/>
+      <path d="M30 15L34 28H26L30 15Z" fill="#9C6B4F"/>
+      <path d="M30 45C33 45 36 42 36 39C36 36 33 33 30 33C27 33 24 36 24 39C24 42 27 45 30 45Z" fill="#9C6B4F"/>
+    </svg>
+    <h1 class="logo">Luméa</h1>
+    <p class="tagline">Tu espacio de belleza y bienestar</p>
+  </header>
+
+  <nav>
+    <ul class="nav-links">
+      <li><a href="index.html">Inicio</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="auth-container">
+      <h1>Crear Cuenta</h1>
+      <form id="registerForm">
+        <div class="input-group">
+          <label for="name">Nombre</label>
+          <input type="text" id="name" required />
+        </div>
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" required />
+        </div>
+        <div class="input-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" required minlength="6" />
+        </div>
+        <div class="input-group">
+          <label for="role">Rol</label>
+          <select id="role" required>
+            <option value="">Selecciona un rol</option>
+            <option value="cliente">Cliente</option>
+            <option value="profesional">Profesional</option>
+          </select>
+        </div>
+        <button type="submit">Registrarse</button>
+        <p id="authToggleText">Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Luméa</p>
+  </footer>
+
+  <script src="js/register.js"></script>
+</body>
+</html>

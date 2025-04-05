@@ -1,36 +1,34 @@
+// backend/server.js
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
 
-// Importar rutas
-const authRoutes = require('./routes/authRoutes');
-const bookingRoutes = require('./routes/bookingRoutes');
-const serviceRoutes = require('./routes/serviceRoutes');
-const userRoutes = require('./routes/userRoutes');
-const availabilityRoutes = require('./routes/availabilityRoutes');
-
 dotenv.config();
 connectDB();
 
 const app = express();
 
-// Middleware
+// Middlewares
 app.use(express.json());
 app.use(cors());
 
-// 🟢 Servir imágenes desde /uploads
-
+// Servir imágenes y archivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(path.join(__dirname, '../frontend/public')));
 
-// Rutas
-app.use('/api/auth', authRoutes);
-app.use('/api/bookings', bookingRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/availability', availabilityRoutes);
+// Rutas API
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/bookings', require('./routes/bookingRoutes'));
+app.use('/api/services', require('./routes/serviceRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/availability', require('./routes/availabilityRoutes'));
 
-// Arranque del servidor
+// Fallback SPA frontend
+app.get(/^\/(?!api|uploads|js|css|img).*/, (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../frontend/public/index.html'));
+});
+
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => console.log(`🚀 Servidor corriendo en puerto ${PORT}`));

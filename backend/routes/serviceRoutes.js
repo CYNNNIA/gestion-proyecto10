@@ -1,4 +1,5 @@
 // backend/routes/serviceRoutes.js
+
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
@@ -10,25 +11,25 @@ const {
   getServicesByProfessional,
   getServiceById,
   updateService,
-  deleteService,
+  deleteService
 } = require("../controllers/serviceController");
 
-// Crear un nuevo servicio con imagen y disponibilidad
-router.post("/create", authMiddleware, upload.single("image"), createService);
-
-// Obtener todos los servicios (público)
+// ✅ Ruta pública para obtener todos los servicios
 router.get("/", getAllServices);
 
-// Obtener los servicios del profesional autenticado
+// ✅ Crear un nuevo servicio
+router.post("/create", authMiddleware, upload.single("image"), createService);
+
+// ✅ Obtener servicios de un profesional autenticado
 router.get("/my-services", authMiddleware, getServicesByProfessional);
 
-// Obtener un servicio por ID (para edición)
+// ✅ Obtener un servicio específico (para edición)
 router.get("/:id", authMiddleware, getServiceById);
 
-// Actualizar un servicio existente
+// ✅ Actualizar servicio
 router.put("/:id", authMiddleware, upload.single("image"), updateService);
 
-// Eliminar un servicio
+// ✅ Eliminar servicio
 router.delete("/:id", authMiddleware, deleteService);
 
 module.exports = router;

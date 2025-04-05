@@ -15,11 +15,11 @@ const imageInput = document.getElementById("serviceImage");
 const availabilityInput = document.getElementById("availabilityInput");
 const availabilityList = document.getElementById("availabilityList");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
+const addAvailabilityBtn = document.getElementById("addAvailabilityBtn");
 const serviceList = document.getElementById("serviceList");
 const reservasList = document.getElementById("listaReservasRecibidas");
 const filtroServicio = document.getElementById("filtroServicio");
 const professionalName = document.getElementById("professionalName");
-const addAvailabilityBtn = document.getElementById("addAvailabilityBtn");
 
 let reservas = [];
 let editingServiceId = null;
@@ -42,22 +42,21 @@ function logout() {
   window.location.href = "login.html";
 }
 
-// Obtener perfil profesional
 async function getProfile() {
   const res = await fetch("http://localhost:5002/api/auth/me", {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) throw new Error("Perfil inválido");
   const data = await res.json();
   professionalName.textContent = data.name;
 }
 
-// Añadir fecha
 addAvailabilityBtn.addEventListener("click", () => {
   const date = availabilityInput.value;
   if (!date || new Date(date) < new Date()) {
-    alert("⚠️ Selecciona una fecha válida y futura.");
-    return;
+    return alert("⚠️ Selecciona una fecha válida y futura.");
+  }
+  if (currentAvailabilities.includes(date)) {
+    return alert("⚠️ Fecha duplicada.");
   }
   currentAvailabilities.push(date);
   renderAvailabilityList();
@@ -68,19 +67,40 @@ function renderAvailabilityList() {
   availabilityList.innerHTML = "";
   currentAvailabilities.forEach((date, index) => {
     const li = document.createElement("li");
-    li.textContent = new Date(date).toLocaleString();
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "❌";
-    delBtn.onclick = () => {
-      currentAvailabilities.splice(index, 1);
-      renderAvailabilityList();
-    };
-    li.appendChild(delBtn);
+    li.draggable = true;
+    li.dataset.index = index;
+    li.innerHTML = `
+      ${new Date(date).toLocaleString()}
+      <button type="button" onclick="removeAvailability(${index})">❌</button>
+    `;
     availabilityList.appendChild(li);
   });
 }
 
-// Cargar servicios
+window.removeAvailability = (i) => {
+  currentAvailabilities.splice(i, 1);
+  renderAvailabilityList();
+};
+
+availabilityList.addEventListener("dragstart", e => {
+  e.dataTransfer.setData("text/plain", e.target.dataset.index);
+});
+
+availabilityList.addEventListener("dragover", e => {
+  e.preventDefault();
+  const draggingOver = e.target.closest("li");
+  if (draggingOver) draggingOver.style.border = "2px dashed #aaa";
+});
+
+availabilityList.addEventListener("drop", e => {
+  e.preventDefault();
+  const from = parseInt(e.dataTransfer.getData("text"));
+  const to = parseInt(e.target.closest("li").dataset.index);
+  const [moved] = currentAvailabilities.splice(from, 1);
+  currentAvailabilities.splice(to, 0, moved);
+  renderAvailabilityList();
+});
+
 async function loadServices() {
   const res = await fetch("http://localhost:5002/api/services/my-services", {
     headers: { Authorization: `Bearer ${token}` },
@@ -112,10 +132,8 @@ async function loadServices() {
   });
 }
 
-// Crear o editar servicio
-serviceForm.addEventListener("submit", async (e) => {
+serviceForm.addEventListener("submit", async e => {
   e.preventDefault();
-
   const name = nameInput.value;
   const description = descInput.value;
   const price = parseFloat(priceInput.value);
@@ -134,12 +152,11 @@ serviceForm.addEventListener("submit", async (e) => {
   if (image) formData.append("image", image);
   currentAvailabilities.forEach(date => formData.append("availability", date));
 
-  let url = "http://localhost:5002/api/services/create";
-  let method = "POST";
-  if (editingServiceId) {
-    url = `http://localhost:5002/api/services/${editingServiceId}`;
-    method = "PUT";
-  }
+  const url = editingServiceId
+    ? `http://localhost:5002/api/services/${editingServiceId}`
+    : "http://localhost:5002/api/services/create";
+
+  const method = editingServiceId ? "PUT" : "POST";
 
   const res = await fetch(url, {
     method,
@@ -169,13 +186,11 @@ cancelEditBtn.addEventListener("click", () => {
   document.querySelector("button[type='submit']").textContent = "Crear Servicio";
 });
 
-// Editar servicio
 async function editService(id) {
   const res = await fetch(`http://localhost:5002/api/services/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   const s = await res.json();
-
   nameInput.value = s.name;
   descInput.value = s.description;
   priceInput.value = s.price;
@@ -183,13 +198,11 @@ async function editService(id) {
   editingServiceId = s._id;
   currentAvailabilities = (s.availability || []).map(a => a.dateTime);
   renderAvailabilityList();
-
   cancelEditBtn.style.display = "inline-block";
   document.querySelector("button[type='submit']").textContent = "Guardar Cambios";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// Eliminar servicio
 async function deleteService(id) {
   if (!confirm("¿Eliminar este servicio?")) return;
   await fetch(`http://localhost:5002/api/services/${id}`, {
@@ -199,7 +212,6 @@ async function deleteService(id) {
   await loadServices();
 }
 
-// Cargar reservas
 async function loadReservas() {
   const res = await fetch("http://localhost:5002/api/bookings/professional", {
     headers: { Authorization: `Bearer ${token}` },

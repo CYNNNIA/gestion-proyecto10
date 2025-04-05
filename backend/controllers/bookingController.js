@@ -4,12 +4,12 @@ const Booking = require('../models/Booking');
 const Service = require('../models/Service');
 const Availability = require('../models/Availability');
 
-// ✅ Crear reserva
+// Crear reserva
 const createBooking = async (req, res) => {
   try {
     const { service, date, time } = req.body;
 
-    if (!req.user || !req.user.id) {
+    if (!req.user?.id) {
       return res.status(401).json({ message: "⚠️ No autorizado." });
     }
 
@@ -26,6 +26,7 @@ const createBooking = async (req, res) => {
 
     const isAvailable = await Availability.findOne({
       professional: selectedService.professional,
+      service,
       dateTime: dateTimeToCheck,
     });
 
@@ -35,7 +36,7 @@ const createBooking = async (req, res) => {
       });
     }
 
-    const existingBooking = await Booking.findOne({ date, time });
+    const existingBooking = await Booking.findOne({ service, date, time });
     if (existingBooking) {
       return res.status(400).json({
         message: "⚠️ Ya hay una reserva en esa fecha y hora.",
@@ -50,6 +51,7 @@ const createBooking = async (req, res) => {
     });
 
     await newBooking.save();
+    await Availability.findByIdAndDelete(isAvailable._id);
 
     res.status(201).json({
       message: "✅ Reserva creada con éxito.",
@@ -61,10 +63,12 @@ const createBooking = async (req, res) => {
   }
 };
 
-// ✅ Obtener reservas del usuario autenticado
+// Obtener reservas del cliente autenticado
 const getBookingsByUser = async (req, res) => {
   try {
-    const bookings = await Booking.find({ user: req.user.id }).populate("service");
+    const bookings = await Booking.find({ user: req.user.id })
+      .populate("service")
+      .populate("user", "name email");
     res.json(bookings);
   } catch (error) {
     console.error("❌ Error obteniendo reservas:", error);
@@ -72,7 +76,7 @@ const getBookingsByUser = async (req, res) => {
   }
 };
 
-// ✅ Obtener todas las reservas (admin)
+// Obtener todas las reservas (admin opcional)
 const getAllBookings = async (req, res) => {
   try {
     if (!req.user || req.user.role !== 'admin') {
@@ -89,7 +93,7 @@ const getAllBookings = async (req, res) => {
   }
 };
 
-// ✅ Obtener reservas para el profesional autenticado
+// Obtener reservas de un profesional autenticado
 const getBookingsForProfessional = async (req, res) => {
   try {
     const services = await Service.find({ professional: req.user.id });
@@ -106,7 +110,7 @@ const getBookingsForProfessional = async (req, res) => {
   }
 };
 
-// ✅ Cancelar reserva
+// Cancelar reserva
 const cancelBooking = async (req, res) => {
   try {
     const { id } = req.params;
@@ -128,10 +132,58 @@ const cancelBooking = async (req, res) => {
   }
 };
 
+// Editar reserva
+const updateBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { date, time } = req.body;
+
+    const booking = await Booking.findById(id);
+    if (!booking) return res.status(404).json({ message: "Reserva no encontrada" });
+
+    if (booking.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: "No autorizado" });
+    }
+
+    const newDateTime = new Date(`${date}T${time}`);
+    const service = await Service.findById(booking.service);
+
+    const available = await Availability.findOne({
+      service: booking.service,
+      professional: service.professional,
+      dateTime: newDateTime,
+    });
+
+    if (!available) {
+      return res.status(400).json({ message: "La nueva fecha no está disponible." });
+    }
+
+    // Restaurar disponibilidad anterior
+    await Availability.create({
+      professional: service.professional,
+      service: booking.service,
+      dateTime: new Date(`${booking.date}T${booking.time}`),
+    });
+
+    // Eliminar nueva disponibilidad usada
+    await Availability.findByIdAndDelete(available._id);
+
+    booking.date = date;
+    booking.time = time;
+    await booking.save();
+
+    res.json({ message: "Reserva actualizada", booking });
+  } catch (err) {
+    console.error("Error al actualizar reserva:", err);
+    res.status(500).json({ message: "Error del servidor" });
+  }
+};
+
 module.exports = {
   createBooking,
   getBookingsByUser,
   getAllBookings,
   cancelBooking,
   getBookingsForProfessional,
+  updateBooking,
 };
