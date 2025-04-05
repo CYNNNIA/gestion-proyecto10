@@ -1,29 +1,34 @@
-const express = require('express');
+// backend/routes/serviceRoutes.js
+const express = require("express");
 const router = express.Router();
-const authMiddleware = require('../middleware/authMiddleware');
-const multer = require('multer');
-const path = require('path');
+const authMiddleware = require("../middleware/authMiddleware");
+const upload = require("../middleware/upload");
+
 const {
   createService,
   getAllServices,
   getServicesByProfessional,
+  getServiceById,
+  updateService,
   deleteService,
-} = require('../controllers/serviceController');
+} = require("../controllers/serviceController");
 
-// Configurar Multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-const upload = multer({ storage });
+// Crear un nuevo servicio con imagen y disponibilidad
+router.post("/create", authMiddleware, upload.single("image"), createService);
 
-// Rutas
-router.post('/create', authMiddleware, upload.single('image'), createService);
-router.get('/my-services', authMiddleware, getServicesByProfessional);
-router.get('/', getAllServices);
-router.delete('/:id', authMiddleware, deleteService);
+// Obtener todos los servicios (público)
+router.get("/", getAllServices);
+
+// Obtener los servicios del profesional autenticado
+router.get("/my-services", authMiddleware, getServicesByProfessional);
+
+// Obtener un servicio por ID (para edición)
+router.get("/:id", authMiddleware, getServiceById);
+
+// Actualizar un servicio existente
+router.put("/:id", authMiddleware, upload.single("image"), updateService);
+
+// Eliminar un servicio
+router.delete("/:id", authMiddleware, deleteService);
 
 module.exports = router;

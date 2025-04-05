@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Panel Profesional</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/dashboard-profesional.css">
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/dashboard-profesional.css" />
 </head>
 <body>
   <nav id="navbar"></nav>
@@ -16,7 +16,7 @@
     </section>
 
     <section class="crear-servicio">
-      <h2>Crear Servicio</h2>
+      <h2>Crear o Editar Servicio</h2>
       <form id="serviceForm" enctype="multipart/form-data">
         <input type="text" id="serviceName" placeholder="Nombre del servicio" required />
         <textarea id="serviceDescription" placeholder="Descripción" required></textarea>
@@ -29,9 +29,18 @@
           <option value="Masajes">Masajes</option>
           <option value="Otros">Otros</option>
         </select>
-        <input type="file" id="serviceImage" name="image" accept="image/*" required />
-        <input type="datetime-local" id="availabilityPicker" required />
-        <button type="submit">Crear Servicio</button>
+        <input type="file" id="serviceImage" name="image" accept="image/*" />
+        
+        <div class="input-group">
+          <label for="availabilityInput">Disponibilidad:</label>
+          <input type="datetime-local" id="availabilityInput" />
+          <button type="button" id="addAvailabilityBtn" class="btn-secondary">Añadir Fecha</button>
+        </div>
+        
+        <ul id="availabilityList"></ul>
+
+        <button type="submit" class="btn-primary">Crear Servicio</button>
+        <button type="button" id="cancelEditBtn" class="btn-secondary" style="display:none;">Cancelar Edición</button>
       </form>
     </section>
 
@@ -50,7 +59,6 @@
   </main>
 
   <footer id="footer"></footer>
-
   <script src="js/dashboard-profesional.js"></script>
 </body>
 </html>
