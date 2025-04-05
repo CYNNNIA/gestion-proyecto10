@@ -1,3 +1,4 @@
+// backend/controllers/serviceController.js
 const Service = require('../models/Service');
 const Availability = require('../models/Availability');
 const fs = require('fs');
@@ -10,7 +11,9 @@ const createService = async (req, res) => {
 
     const availArray = Array.isArray(availability)
       ? availability
-      : typeof availability === 'string' ? [availability] : [];
+      : typeof availability === 'string'
+        ? [availability]
+        : [];
 
     if (!name || !description || !price || !category || availArray.length === 0) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
@@ -21,12 +24,9 @@ const createService = async (req, res) => {
       description,
       price: parseFloat(price),
       category,
-      professional: req.user.id
+      professional: req.user.id,
+      image: req.file ? `/uploads/${req.file.filename}` : null
     });
-
-    if (req.file) {
-      newService.image = `/uploads/${req.file.filename}`;
-    }
 
     const savedService = await newService.save();
 
@@ -49,7 +49,16 @@ const createService = async (req, res) => {
 const getServicesByProfessional = async (req, res) => {
   try {
     const services = await Service.find({ professional: req.user.id });
-    res.json(services);
+    const servicesWithAvail = await Promise.all(
+      services.map(async (s) => {
+        const slots = await Availability.find({ service: s._id });
+        return {
+          ...s.toObject(),
+          availabilities: slots.map(sl => sl.dateTime)
+        };
+      })
+    );
+    res.json(servicesWithAvail);
   } catch (err) {
     console.error('Error al obtener servicios:', err);
     res.status(500).json({ message: 'Error del servidor.' });
@@ -76,7 +85,8 @@ const deleteService = async (req, res) => {
     }
 
     if (service.image) {
-      fs.unlinkSync(path.join(__dirname, '..', 'public', service.image));
+      const imgPath = path.join(__dirname, '..', service.image);
+      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
     }
 
     await Availability.deleteMany({ service: service._id });

@@ -51,7 +51,6 @@ async function loadServices() {
     headers: { Authorization: `Bearer ${token}` },
   });
   const services = await res.json();
-
   if (!Array.isArray(services)) throw new Error("Respuesta no válida");
 
   serviceList.innerHTML = "";
@@ -106,6 +105,7 @@ function showReservas() {
 
 filtroServicio.addEventListener("change", showReservas);
 
+// Crear servicio
 serviceForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -116,7 +116,7 @@ serviceForm.addEventListener("submit", async (e) => {
   const availability = availabilityInput.value;
   const image = imageInput.files[0];
 
-  if (!name || !description || isNaN(price) || !category || !availability || !image) {
+  if (!name || !description || !price || !category || !availability || !image) {
     return alert("⚠️ Todos los campos son obligatorios.");
   }
 
@@ -125,8 +125,8 @@ serviceForm.addEventListener("submit", async (e) => {
   formData.append("description", description);
   formData.append("price", price);
   formData.append("category", category);
-  formData.append("availability", availability);
   formData.append("image", image);
+  formData.append("availability", availability); // como string
 
   const res = await fetch("http://localhost:5002/api/services/create", {
     method: "POST",
