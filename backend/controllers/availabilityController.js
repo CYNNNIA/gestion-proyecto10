@@ -2,23 +2,24 @@
 
 const Availability = require("../models/Availability");
 
-// ✅ Añadir disponibilidad
+// Crear disponibilidad (usada al crear servicio)
 exports.addAvailability = async (req, res) => {
   try {
-    const { dateTime } = req.body;
+    const { dateTime, service } = req.body;
 
-    if (!dateTime) {
-      return res.status(400).json({ message: "⚠️ Debes proporcionar una fecha y hora." });
+    if (!dateTime || !service) {
+      return res.status(400).json({ message: "⚠️ Fecha y servicio requeridos." });
     }
 
     const newAvailability = new Availability({
       professional: req.user.id,
+      service,
       dateTime,
     });
 
     await newAvailability.save();
     res.status(201).json({
-      message: "✅ Disponibilidad guardada con éxito.",
+      message: "✅ Disponibilidad creada",
       availability: newAvailability,
     });
   } catch (error) {
@@ -27,18 +28,7 @@ exports.addAvailability = async (req, res) => {
   }
 };
 
-// ✅ Obtener disponibilidad del profesional autenticado
-exports.getAvailabilityByProfessional = async (req, res) => {
-  try {
-    const availability = await Availability.find({ professional: req.user.id });
-    res.json(availability);
-  } catch (error) {
-    console.error("❌ Error al obtener disponibilidad:", error);
-    res.status(500).json({ message: "⚠️ Error del servidor." });
-  }
-};
-
-// ✅ Obtener TODA la disponibilidad (para mostrar al cliente)
+// Obtener TODA la disponibilidad (admin)
 exports.getAllAvailability = async (req, res) => {
   try {
     const availability = await Availability.find();
@@ -49,12 +39,21 @@ exports.getAllAvailability = async (req, res) => {
   }
 };
 
-// ✅ Obtener disponibilidad por ID de profesional (usada por clientes)
+// Profesional autenticado: obtener sus disponibilidades
+exports.getAvailabilityByProfessional = async (req, res) => {
+  try {
+    const availability = await Availability.find({ professional: req.user.id });
+    res.json(availability);
+  } catch (error) {
+    console.error("❌ Error al obtener disponibilidad:", error);
+    res.status(500).json({ message: "⚠️ Error del servidor." });
+  }
+};
+
+// Profesional por ID (para cliente)
 exports.getAvailabilityByProfessionalId = async (req, res) => {
   try {
     const { professionalId } = req.params;
-
-    console.log("🔍 Buscando disponibilidad para ID de profesional:", professionalId);
 
     if (!professionalId.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).json({ message: "❌ ID de profesional no válido." });
@@ -69,6 +68,23 @@ exports.getAvailabilityByProfessionalId = async (req, res) => {
     res.json(availability);
   } catch (error) {
     console.error("❌ Error al obtener disponibilidad por ID:", error);
+    res.status(500).json({ message: "⚠️ Error del servidor." });
+  }
+};
+
+// 🔥 NUEVA: obtener disponibilidad por servicio
+exports.getAvailabilityByServiceId = async (req, res) => {
+  try {
+    const { serviceId } = req.params;
+
+    if (!serviceId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "❌ ID de servicio no válido." });
+    }
+
+    const availability = await Availability.find({ service: serviceId });
+    res.json(availability);
+  } catch (error) {
+    console.error("❌ Error al obtener disponibilidad por servicio:", error);
     res.status(500).json({ message: "⚠️ Error del servidor." });
   }
 };

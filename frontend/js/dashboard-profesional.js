@@ -37,6 +37,7 @@ function logout() {
   window.location.href = "login.html";
 }
 
+// Obtener perfil profesional
 async function getProfile() {
   const res = await fetch("http://localhost:5002/api/auth/me", {
     headers: { Authorization: `Bearer ${token}` },
@@ -46,6 +47,7 @@ async function getProfile() {
   professionalName.textContent = data.name;
 }
 
+// Cargar servicios
 async function loadServices() {
   const res = await fetch("http://localhost:5002/api/services/my-services", {
     headers: { Authorization: `Bearer ${token}` },
@@ -56,7 +58,10 @@ async function loadServices() {
   serviceList.innerHTML = "";
   filtroServicio.innerHTML = '<option value="">Todos los servicios</option>';
 
-  services.forEach(s => {
+  for (const s of services) {
+    const availRes = await fetch(`http://localhost:5002/api/availability/service/${s._id}`);
+    const availabilities = await availRes.json();
+
     const div = document.createElement("div");
     div.classList.add("card");
     div.innerHTML = `
@@ -65,7 +70,7 @@ async function loadServices() {
       <p>${s.category} - ${Number(s.price).toFixed(2)}€</p>
       ${s.image ? `<img src="http://localhost:5002${s.image}" width="150" />` : ""}
       <ul>
-        ${(s.availabilities || []).map(a => `<li>${new Date(a).toLocaleString()}</li>`).join("")}
+        ${availabilities.length ? availabilities.map(a => `<li>${new Date(a.dateTime).toLocaleString()}</li>`).join("") : "<li>No hay disponibilidad</li>"}
       </ul>
       <button onclick="deleteService('${s._id}')">Eliminar</button>
       <button onclick="editService('${s._id}')">Editar</button>
@@ -76,9 +81,10 @@ async function loadServices() {
     opt.value = s._id;
     opt.textContent = s.name;
     filtroServicio.appendChild(opt);
-  });
+  }
 }
 
+// Cargar reservas
 async function loadReservas() {
   const res = await fetch("http://localhost:5002/api/bookings/professional", {
     headers: { Authorization: `Bearer ${token}` },
@@ -109,8 +115,8 @@ filtroServicio.addEventListener("change", showReservas);
 serviceForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = nameInput.value.trim();
-  const description = descInput.value.trim();
+  const name = nameInput.value;
+  const description = descInput.value;
   const price = parseFloat(priceInput.value);
   const category = categoryInput.value;
   const availability = availabilityInput.value;
@@ -125,8 +131,8 @@ serviceForm.addEventListener("submit", async (e) => {
   formData.append("description", description);
   formData.append("price", price);
   formData.append("category", category);
+  formData.append("availability", availability);
   formData.append("image", image);
-  formData.append("availability", availability); // como string
 
   const res = await fetch("http://localhost:5002/api/services/create", {
     method: "POST",

@@ -1,4 +1,3 @@
-// backend/controllers/serviceController.js
 const Service = require('../models/Service');
 const Availability = require('../models/Availability');
 const fs = require('fs');
@@ -11,9 +10,7 @@ const createService = async (req, res) => {
 
     const availArray = Array.isArray(availability)
       ? availability
-      : typeof availability === 'string'
-        ? [availability]
-        : [];
+      : typeof availability === 'string' ? [availability] : [];
 
     if (!name || !description || !price || !category || availArray.length === 0) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
@@ -24,9 +21,12 @@ const createService = async (req, res) => {
       description,
       price: parseFloat(price),
       category,
-      professional: req.user.id,
-      image: req.file ? `/uploads/${req.file.filename}` : null
+      professional: req.user.id
     });
+
+    if (req.file) {
+      newService.image = `/uploads/${req.file.filename}`;
+    }
 
     const savedService = await newService.save();
 
@@ -45,20 +45,27 @@ const createService = async (req, res) => {
   }
 };
 
-// Servicios propios
+// Servicios propios (con disponibilidad específica)
 const getServicesByProfessional = async (req, res) => {
   try {
-    const services = await Service.find({ professional: req.user.id });
-    const servicesWithAvail = await Promise.all(
-      services.map(async (s) => {
-        const slots = await Availability.find({ service: s._id });
-        return {
-          ...s.toObject(),
-          availabilities: slots.map(sl => sl.dateTime)
-        };
-      })
-    );
-    res.json(servicesWithAvail);
+    const services = await Service.find({ professional: req.user.id }).lean();
+
+    const serviceIds = services.map(s => s._id);
+    const allAvailability = await Availability.find({ service: { $in: serviceIds } });
+
+    const grouped = {};
+    allAvailability.forEach(a => {
+      const id = a.service.toString();
+      if (!grouped[id]) grouped[id] = [];
+      grouped[id].push(a.dateTime);
+    });
+
+    const withAvail = services.map(s => ({
+      ...s,
+      availabilities: grouped[s._id.toString()] || []
+    }));
+
+    res.json(withAvail);
   } catch (err) {
     console.error('Error al obtener servicios:', err);
     res.status(500).json({ message: 'Error del servidor.' });

@@ -2,17 +2,20 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/authMiddleware");
+
 const {
   addAvailability,
   getAvailabilityByProfessional,
   getAllAvailability,
-  getAvailabilityByProfessionalId
+  getAvailabilityByProfessionalId,
+  getAvailabilityByServiceId, // ✅ añadido
 } = require("../controllers/availabilityController");
 
-// Todas las rutas necesarias:
+// Rutas
 router.get("/all", getAllAvailability); // público
 router.post("/add", auth, addAvailability); // profesional logueado
 router.get("/my-availability", auth, getAvailabilityByProfessional); // profesional logueado
-router.get("/professional/:professionalId", getAvailabilityByProfessionalId); // 🟢 cliente
+router.get("/professional/:professionalId", getAvailabilityByProfessionalId); // cliente
+router.get("/service/:serviceId", getAvailabilityByServiceId); // ✅ nueva ruta
 
 module.exports = router;
