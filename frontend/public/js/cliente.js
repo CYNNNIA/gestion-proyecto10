@@ -1,4 +1,3 @@
-// public/js/cliente.js
 const token = localStorage.getItem("token");
 if (!token) {
   alert("⚠️ Debes iniciar sesión.");
@@ -9,8 +8,12 @@ const clientName = document.getElementById("clientName");
 const clientEmail = document.getElementById("clientEmail");
 const clientRole = document.getElementById("clientRole");
 const reservasList = document.getElementById("reservasList");
+const editModal = document.getElementById("editModal");
+const editBookingForm = document.getElementById("editBookingForm");
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+const editBookingId = document.getElementById("editBookingId");
+const editDatetime = document.getElementById("editDatetime");
 
-// Obtener perfil
 async function loadClientProfile() {
   try {
     const res = await fetch("http://localhost:5002/api/auth/me", {
@@ -25,51 +28,72 @@ async function loadClientProfile() {
   }
 }
 
-// Obtener reservas del cliente
-async function loadClientBookings() {
-  try {
-    const res = await fetch("http://localhost:5002/api/bookings/user", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const bookings = await res.json();
+async function cargarReservas() {
+  const res = await fetch("http://localhost:5002/api/bookings/user", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const reservas = await res.json();
 
-    reservasList.innerHTML = "";
-    if (!bookings.length) {
-      reservasList.innerHTML = "<li>No tienes reservas.</li>";
-      return;
-    }
+  reservasList.innerHTML = "";
+  if (reservas.length === 0) {
+    reservasList.innerHTML = "<li>No tienes reservas aún.</li>";
+    return;
+  }
 
-    bookings.forEach((b) => {
-      const li = document.createElement("li");
-      const fecha = new Date(`${b.date}T${b.time}`).toLocaleString("es-ES");
-      li.innerHTML = `
-        <strong>${b.service?.name || "(servicio eliminado)"}</strong><br>
-        Fecha: ${fecha}<br>
-        <button onclick="cancelarReserva('${b._id}')">❌ Cancelar</button>
-        <button onclick="editarReserva('${b._id}', '${b.date}', '${b.time}')">✏️ Editar</button>
-      `;
-      reservasList.appendChild(li);
-    });
-  } catch (error) {
-    console.error("Error al obtener reservas", error);
+  for (const r of reservas) {
+    const fechaHora = `${r.date} ${r.time}`;
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <strong>${r.service?.name || "(Sin nombre)"}</strong> - ${fechaHora}<br>
+      <button onclick="abrirModalEdicion('${r._id}', '${r.service._id}')">Editar</button>
+      <button onclick="cancelarReserva('${r._id}')">Cancelar</button>
+    `;
+    reservasList.appendChild(li);
   }
 }
 
-// Cancelar
-async function cancelarReserva(id) {
-  if (!confirm("¿Cancelar esta reserva?")) return;
-  await fetch(`http://localhost:5002/api/bookings/${id}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  await loadClientBookings();
-}
+window.abrirModalEdicion = async (bookingId, serviceId) => {
+  editBookingId.value = bookingId;
+  editDatetime.innerHTML = "";
 
-// Editar
-async function editarReserva(id, oldDate, oldTime) {
-  const nuevaFecha = prompt("Nueva fecha (YYYY-MM-DD):", oldDate);
-  const nuevaHora = prompt("Nueva hora (HH:MM):", oldTime);
-  if (!nuevaFecha || !nuevaHora) return;
+  const res = await fetch(`http://localhost:5002/api/availability/service/${serviceId}`);
+  const disponibilidad = await res.json();
+
+  const ahora = new Date();
+  const futureOptions = disponibilidad
+    .filter(d => new Date(d.dateTime) > ahora)
+    .map(d => {
+      const fecha = new Date(d.dateTime);
+      return {
+        value: fecha.toISOString(),
+        label: `${fecha.toLocaleDateString()} ${fecha.toTimeString().slice(0, 5)}`
+      };
+    });
+
+  if (futureOptions.length === 0) {
+    editDatetime.innerHTML = '<option value="">No hay disponibilidad</option>';
+    editDatetime.disabled = true;
+  } else {
+    editDatetime.innerHTML = futureOptions
+      .map(opt => `<option value="${opt.value}">${opt.label}</option>`)
+      .join("");
+    editDatetime.disabled = false;
+  }
+
+  editModal.style.display = "flex";
+};
+
+cancelEditBtn.onclick = () => {
+  editModal.style.display = "none";
+};
+
+editBookingForm.onsubmit = async e => {
+  e.preventDefault();
+  const id = editBookingId.value;
+  const iso = editDatetime.value;
+  if (!iso || iso === "Invalid Date") return alert("❌ Selecciona una fecha y hora válida.");
+
+  const [date, time] = iso.split("T");
 
   const res = await fetch(`http://localhost:5002/api/bookings/${id}`, {
     method: "PUT",
@@ -77,16 +101,30 @@ async function editarReserva(id, oldDate, oldTime) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ date: nuevaFecha, time: nuevaHora }),
+    body: JSON.stringify({ date, time: time.slice(0, 5) }),
   });
 
   const data = await res.json();
-  if (!res.ok) return alert("❌ " + data.message);
-  alert("✅ Reserva actualizada.");
-  await loadClientBookings();
-}
+  if (!res.ok) return alert("❌ " + (data.message || "Error modificando reserva"));
+
+  alert("✅ Reserva modificada correctamente.");
+  editModal.style.display = "none";
+  await cargarReservas();
+};
+
+window.cancelarReserva = async id => {
+  if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
+  const res = await fetch(`http://localhost:5002/api/bookings/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  if (!res.ok) return alert("❌ Error: " + (data.message || "Error cancelando."));
+  alert("✅ Reserva cancelada.");
+  await cargarReservas();
+};
 
 (async () => {
   await loadClientProfile();
-  await loadClientBookings();
+  await cargarReservas();
 })();

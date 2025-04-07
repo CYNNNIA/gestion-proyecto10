@@ -20,6 +20,22 @@
 
     <h2>Mis Reservas</h2>
     <ul id="reservasList"><li>Cargando...</li></ul>
+    <!-- 🔧 Modal para editar reserva -->
+<!-- Modal para editar reserva -->
+<div id="editModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <h2>Editar Reserva</h2>
+    <form id="editBookingForm">
+      <input type="hidden" id="editBookingId">
+      
+      <label for="editDatetime">Nueva fecha y hora:</label>
+      <select id="editDatetime" required></select>
+      
+      <button type="submit">Guardar cambios</button>
+      <button type="button" id="cancelEditBtn">Cancelar</button>
+    </form>
+  </div>
+</div>
 
     <h3>Próximamente...</h3>
     <p>Aquí podrás editar tu información, marcar servicios favoritos y ver el historial de reservas.</p>

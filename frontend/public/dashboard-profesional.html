@@ -1,3 +1,4 @@
+<!-- public/dashboard-profesional.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -19,9 +20,9 @@
       <p class="tagline">Agenda Belleza & Bienestar</p>
     </div>
   </header>
+
   <nav class="navbar">
     <div class="container">
-
       <div class="nav-links">
         <a href="dashboard-profesional.html">Mi Panel</a>
         <a href="#" onclick="logout()">Cerrar Sesión</a>
@@ -49,7 +50,7 @@
           <option value="Otros">Otros</option>
         </select>
         <input type="file" id="serviceImage" name="image" accept="image/*" required />
-        <input type="datetime-local" id="availabilityInput" required />
+        <input type="datetime-local" id="firstAvailabilityInput" required />
         <button type="submit">Crear Servicio</button>
         <button type="button" id="cancelEditBtn" class="btn-secondary" style="display:none;">Cancelar edición</button>
       </form>
@@ -58,12 +59,6 @@
     <section class="servicios-lista">
       <h2>Mis Servicios</h2>
       <div id="serviceList"></div>
-      <div class="input-group">
-        <label for="availabilityInput">Disponibilidad:</label>
-        <input type="datetime-local" id="availabilityInput" />
-        <button type="button" id="addAvailabilityBtn" class="btn-secondary">Añadir Fecha</button>
-      </div>
-      <ul id="availabilityList"></ul>
     </section>
 
     <section class="reservas-recibidas">

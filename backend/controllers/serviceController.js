@@ -9,14 +9,10 @@ const path = require('path');
 // Crear servicio
 exports.createService = async (req, res) => {
   try {
-    const { name, description, price, category, availability } = req.body;
-    const availArray = Array.isArray(availability)
-      ? availability
-      : typeof availability === 'string'
-        ? [availability]
-        : [];
+    const { name, description, price, category } = req.body;
+    const availability = req.body.firstAvailabilityInput || req.body.availability;
 
-    if (!name || !description || !price || !category || availArray.length === 0) {
+    if (!name || !description || !price || !category || !availability) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
     }
 
@@ -34,13 +30,14 @@ exports.createService = async (req, res) => {
 
     const savedService = await newService.save();
 
-    const availDocs = availArray.map(dateTime => ({
-      professional: req.user.id,
-      service: savedService._id,
-      dateTime,
-    }));
-
-    await Availability.insertMany(availDocs);
+    const date = new Date(availability);
+    if (!isNaN(date) && date > new Date()) {
+      await Availability.create({
+        professional: req.user.id,
+        service: savedService._id,
+        dateTime: date,
+      });
+    }
 
     res.status(201).json(savedService);
   } catch (err) {
@@ -51,14 +48,14 @@ exports.createService = async (req, res) => {
 
 // Obtener todos los servicios
 exports.getAllServices = async (req, res) => {
-    try {
-      const services = await Service.find().populate("professional", "name email");
-      res.json(services);
-    } catch (err) {
-      console.error("❌ Error al obtener servicios:", err);
-      res.status(500).json({ message: "Error al obtener servicios." });
-    }
-  };
+  try {
+    const services = await Service.find().populate("professional", "name email");
+    res.json(services);
+  } catch (err) {
+    console.error("❌ Error al obtener servicios:", err);
+    res.status(500).json({ message: "Error al obtener servicios." });
+  }
+};
 
 // Obtener servicios del profesional con disponibilidad
 exports.getServicesByProfessional = async (req, res) => {
@@ -126,7 +123,10 @@ exports.updateService = async (req, res) => {
         : [];
 
     const existing = await Availability.find({ service: id }).distinct('dateTime');
-    const newDates = availArray.filter(dt => !existing.includes(new Date(dt).toISOString()));
+    const newDates = availArray
+      .map(dt => new Date(dt))
+      .filter(dt => !isNaN(dt) && !existing.includes(dt.toISOString()));
+
     const newAvail = newDates.map(dt => ({ professional: req.user.id, service: id, dateTime: dt }));
     if (newAvail.length) await Availability.insertMany(newAvail);
 

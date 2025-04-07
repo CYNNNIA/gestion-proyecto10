@@ -8,14 +8,24 @@ const {
   getAvailabilityByProfessional,
   getAllAvailability,
   getAvailabilityByProfessionalId,
-  getAvailabilityByServiceId, // ✅ añadido
+  getAvailabilityByServiceId
 } = require("../controllers/availabilityController");
 
-// Rutas
-router.get("/all", getAllAvailability); // público
-router.post("/add", auth, addAvailability); // profesional logueado
-router.get("/my-availability", auth, getAvailabilityByProfessional); // profesional logueado
-router.get("/professional/:professionalId", getAvailabilityByProfessionalId); // cliente
-router.get("/service/:serviceId", getAvailabilityByServiceId); // ✅ nueva ruta
+router.get("/all", getAllAvailability);
+router.post("/add", auth, addAvailability);
+router.get("/my-availability", auth, getAvailabilityByProfessional);
+router.get("/professional/:professionalId", getAvailabilityByProfessionalId);
+router.get("/service/:serviceId", getAvailabilityByServiceId);
+
+// ✅ Ruta para eliminar una disponibilidad por ID
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const deleted = await require('../models/Availability').findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: 'No encontrado' });
+    res.json({ message: '✅ Eliminado' });
+  } catch (err) {
+    res.status(500).json({ message: '⚠️ Error del servidor' });
+  }
+});
 
 module.exports = router;

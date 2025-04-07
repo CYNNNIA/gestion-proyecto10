@@ -19,6 +19,7 @@ router.get("/professional", auth, getBookingsForProfessional);
 router.get("/all", auth, getAllBookings); // si es admin
 router.delete("/:id", auth, cancelBooking);
 
+
 // ⬅️ Añade esta nueva ruta
 router.put("/:id", auth, updateBooking);
 

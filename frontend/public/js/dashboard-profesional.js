@@ -1,4 +1,4 @@
-// frontend/js/dashboard-profesional.js
+// public/js/dashboard-profesional.js
 
 const token = localStorage.getItem("token");
 if (!token) {
@@ -12,35 +12,15 @@ const descInput = document.getElementById("serviceDescription");
 const priceInput = document.getElementById("servicePrice");
 const categoryInput = document.getElementById("serviceCategory");
 const imageInput = document.getElementById("serviceImage");
-const availabilityInput = document.getElementById("availabilityInput");
-const availabilityList = document.getElementById("availabilityList");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
-const addAvailabilityBtn = document.getElementById("addAvailabilityBtn");
 const serviceList = document.getElementById("serviceList");
 const reservasList = document.getElementById("listaReservasRecibidas");
 const filtroServicio = document.getElementById("filtroServicio");
 const professionalName = document.getElementById("professionalName");
+const firstAvailabilityInput = document.getElementById("firstAvailabilityInput");
 
 let reservas = [];
 let editingServiceId = null;
-let currentAvailabilities = [];
-
-// Navbar dinámica
-fetch("components/navbar.html")
-  .then(res => res.text())
-  .then(html => {
-    document.getElementById("navbar").innerHTML = html;
-    const links = document.querySelector("#navbar .nav-links");
-    links.innerHTML = `
-      <a href="dashboard-profesional.html">Mi Panel</a>
-      <a href="#" onclick="logout()">Cerrar Sesión</a>
-    `;
-  });
-
-function logout() {
-  localStorage.removeItem("token");
-  window.location.href = "login.html";
-}
 
 async function getProfile() {
   const res = await fetch("http://localhost:5002/api/auth/me", {
@@ -50,62 +30,17 @@ async function getProfile() {
   professionalName.textContent = data.name;
 }
 
-addAvailabilityBtn.addEventListener("click", () => {
-  const date = availabilityInput.value;
-  if (!date || new Date(date) < new Date()) {
-    return alert("⚠️ Selecciona una fecha válida y futura.");
-  }
-  if (currentAvailabilities.includes(date)) {
-    return alert("⚠️ Fecha duplicada.");
-  }
-  currentAvailabilities.push(date);
-  renderAvailabilityList();
-  availabilityInput.value = "";
-});
-
-function renderAvailabilityList() {
-  availabilityList.innerHTML = "";
-  currentAvailabilities.forEach((date, index) => {
-    const li = document.createElement("li");
-    li.draggable = true;
-    li.dataset.index = index;
-    li.innerHTML = `
-      ${new Date(date).toLocaleString()}
-      <button type="button" onclick="removeAvailability(${index})">❌</button>
-    `;
-    availabilityList.appendChild(li);
-  });
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "login.html";
 }
-
-window.removeAvailability = (i) => {
-  currentAvailabilities.splice(i, 1);
-  renderAvailabilityList();
-};
-
-availabilityList.addEventListener("dragstart", e => {
-  e.dataTransfer.setData("text/plain", e.target.dataset.index);
-});
-
-availabilityList.addEventListener("dragover", e => {
-  e.preventDefault();
-  const draggingOver = e.target.closest("li");
-  if (draggingOver) draggingOver.style.border = "2px dashed #aaa";
-});
-
-availabilityList.addEventListener("drop", e => {
-  e.preventDefault();
-  const from = parseInt(e.dataTransfer.getData("text"));
-  const to = parseInt(e.target.closest("li").dataset.index);
-  const [moved] = currentAvailabilities.splice(from, 1);
-  currentAvailabilities.splice(to, 0, moved);
-  renderAvailabilityList();
-});
 
 async function loadServices() {
   const res = await fetch("http://localhost:5002/api/services/my-services", {
     headers: { Authorization: `Bearer ${token}` },
   });
   const services = await res.json();
+
   serviceList.innerHTML = "";
   filtroServicio.innerHTML = '<option value="">Todos los servicios</option>';
 
@@ -117,8 +52,14 @@ async function loadServices() {
       <p>${s.description}</p>
       <p>${s.category} - ${Number(s.price).toFixed(2)}€</p>
       ${s.image ? `<img src="http://localhost:5002${s.image}" width="150" />` : ""}
+      <input type="datetime-local" id="date-${s._id}" />
+      <button onclick="addDate('${s._id}')">➕ Añadir Fecha</button>
       <ul>
-        ${(s.availability || []).map(a => `<li>${new Date(a.dateTime).toLocaleString()}</li>`).join("")}
+        ${(s.availability || []).map(a => `
+          <li>
+            ${new Date(a.dateTime).toLocaleString()}
+            <button onclick="deleteAvailability('${a._id}')">❌</button>
+          </li>`).join("")}
       </ul>
       <button onclick="deleteService('${s._id}')">Eliminar</button>
       <button onclick="editService('${s._id}')">Editar</button>
@@ -132,6 +73,59 @@ async function loadServices() {
   });
 }
 
+window.addDate = async serviceId => {
+  const input = document.getElementById(`date-${serviceId}`);
+  const datetime = input.value;
+  if (!datetime || new Date(datetime) < new Date()) return alert("⚠️ Fecha inválida");
+
+  const res = await fetch("http://localhost:5002/api/availability/add", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ service: serviceId, dateTime: datetime }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) return alert("❌ " + (data.message || "Error añadiendo disponibilidad"));
+  await loadServices();
+};
+
+window.deleteAvailability = async id => {
+  const res = await fetch(`http://localhost:5002/api/availability/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  if (!res.ok) return alert("❌ " + (data.message || "Error eliminando disponibilidad"));
+  await loadServices();
+};
+
+async function editService(id) {
+  const res = await fetch(`http://localhost:5002/api/services/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const s = await res.json();
+  nameInput.value = s.name;
+  descInput.value = s.description;
+  priceInput.value = s.price;
+  categoryInput.value = s.category;
+  editingServiceId = s._id;
+  cancelEditBtn.style.display = "inline-block";
+  document.querySelector("button[type='submit']").textContent = "Guardar Cambios";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function deleteService(id) {
+  if (!confirm("¿Eliminar este servicio?")) return;
+  await fetch(`http://localhost:5002/api/services/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  await loadServices();
+}
+
 serviceForm.addEventListener("submit", async e => {
   e.preventDefault();
   const name = nameInput.value;
@@ -139,8 +133,9 @@ serviceForm.addEventListener("submit", async e => {
   const price = parseFloat(priceInput.value);
   const category = categoryInput.value;
   const image = imageInput.files[0];
+  const firstAvailability = firstAvailabilityInput.value;
 
-  if (!name || !description || !price || !category) {
+  if (!name || !description || !price || !category || !firstAvailability) {
     return alert("⚠️ Todos los campos son obligatorios.");
   }
 
@@ -150,7 +145,7 @@ serviceForm.addEventListener("submit", async e => {
   formData.append("price", price);
   formData.append("category", category);
   if (image) formData.append("image", image);
-  currentAvailabilities.forEach(date => formData.append("availability", date));
+  formData.append("availability", firstAvailability);
 
   const url = editingServiceId
     ? `http://localhost:5002/api/services/${editingServiceId}`
@@ -169,48 +164,18 @@ serviceForm.addEventListener("submit", async e => {
 
   alert(`✅ Servicio ${editingServiceId ? "actualizado" : "creado"} correctamente.`);
   serviceForm.reset();
-  currentAvailabilities = [];
   editingServiceId = null;
   cancelEditBtn.style.display = "none";
   document.querySelector("button[type='submit']").textContent = "Crear Servicio";
-  renderAvailabilityList();
   await loadServices();
 });
 
 cancelEditBtn.addEventListener("click", () => {
   editingServiceId = null;
-  currentAvailabilities = [];
-  renderAvailabilityList();
   serviceForm.reset();
   cancelEditBtn.style.display = "none";
   document.querySelector("button[type='submit']").textContent = "Crear Servicio";
 });
-
-async function editService(id) {
-  const res = await fetch(`http://localhost:5002/api/services/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const s = await res.json();
-  nameInput.value = s.name;
-  descInput.value = s.description;
-  priceInput.value = s.price;
-  categoryInput.value = s.category;
-  editingServiceId = s._id;
-  currentAvailabilities = (s.availability || []).map(a => a.dateTime);
-  renderAvailabilityList();
-  cancelEditBtn.style.display = "inline-block";
-  document.querySelector("button[type='submit']").textContent = "Guardar Cambios";
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-async function deleteService(id) {
-  if (!confirm("¿Eliminar este servicio?")) return;
-  await fetch(`http://localhost:5002/api/services/${id}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  await loadServices();
-}
 
 async function loadReservas() {
   const res = await fetch("http://localhost:5002/api/bookings/professional", {
@@ -229,7 +194,7 @@ function showReservas() {
     return;
   }
   filtradas.forEach(r => {
-    const fecha = new Date(r.date).toLocaleString("es-ES");
+    const fecha = new Date(`${r.date}T${r.time}`).toLocaleString("es-ES");
     const li = document.createElement("li");
     li.textContent = `${r.service.name} - ${fecha} | Cliente: ${r.user.name} (${r.user.email})`;
     reservasList.appendChild(li);
@@ -239,11 +204,7 @@ function showReservas() {
 filtroServicio.addEventListener("change", showReservas);
 
 (async () => {
-  try {
-    await getProfile();
-    await loadServices();
-    await loadReservas();
-  } catch (err) {
-    console.error("❌ Error:", err);
-  }
+  await getProfile();
+  await loadServices();
+  await loadReservas();
 })();
