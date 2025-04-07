@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentPage = window.location.pathname;
 
   const token = localStorage.getItem("token");
-  const role = localStorage.getItem("userRole");
+  const role = localStorage.getItem("userRole"); // 👈 debe estar guardado al hacer login
 
   if (navbar) {
     navbar.innerHTML = `
@@ -28,17 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const dashboardLink = document.getElementById("dashboardLink");
 
   if (dashboardLink) {
-    if (role === "profesional") {
-      dashboardLink.href = "dashboard-profesional.html";
-    } else {
-      dashboardLink.href = "cliente.html";
-    }
+    dashboardLink.href = role === "profesional"
+      ? "dashboard-profesional.html"
+      : "cliente.html";
   }
 
   if (currentPage.includes("login.html") || currentPage.includes("register.html")) {
     if (loginNav) loginNav.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "none";
-  } else if (token) {
+  } else if (token && role) {
     if (loginNav) loginNav.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "inline-block";
   } else {
