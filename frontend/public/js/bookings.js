@@ -1,9 +1,7 @@
+// public/js/bookings.js
+
 document.addEventListener("DOMContentLoaded", async () => {
-  const bookingForm = document.getElementById("bookingForm");
-  const dateSelect = document.getElementById("date");
-  const timeSelect = document.getElementById("time");
-  const serviceSelect = document.getElementById("type");
-  const dateError = document.getElementById("dateError");
+  const serviciosContainer = document.getElementById("serviciosContainer");
   const listaReservas = document.getElementById("listaReservas");
 
   const token = localStorage.getItem("token");
@@ -13,126 +11,48 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  let servicios = [];
-  let disponibilidadPorFecha = {};
-
-  async function cargarServicios() {
+  async function cargarServiciosYDisponibilidad() {
     try {
       const res = await fetch("http://127.0.0.1:5002/api/services");
-      const data = await res.json();
-      servicios = data;
+      const servicios = await res.json();
 
-      data.forEach(service => {
-        const option = document.createElement("option");
-        option.value = service._id;
-        option.textContent = `${service.name} (${service.category}) - ${service.price}€`;
-        serviceSelect.appendChild(option);
-      });
-    } catch (error) {
-      alert("❌ No se pudieron cargar los servicios. Intenta más tarde.");
-      console.error("❌ Error al cargar servicios:", error);
-    }
-  }
+      serviciosContainer.innerHTML = "";
 
-  serviceSelect.addEventListener("change", async () => {
-    const servicioId = serviceSelect.value;
-    const servicioSeleccionado = servicios.find(s => s._id === servicioId);
-    if (!servicioSeleccionado) {
-      alert("⚠️ Servicio no encontrado.");
-      return;
-    }
-  
-    // ✅ CORREGIDO: sacar solo el _id del profesional
-    const professionalId = servicioSeleccionado.professional._id;
-  
-    if (!professionalId) {
-      alert("⚠️ Este servicio no tiene un profesional asignado.");
-      return;
-    }
-  
-    try {
-      await cargarDisponibilidadDelProfesional(professionalId);
+      for (const servicio of servicios) {
+        const disponibilidadRes = await fetch(`http://127.0.0.1:5002/api/availability/service/${servicio._id}`);
+        const disponibilidad = await disponibilidadRes.json();
+
+        const div = document.createElement("div");
+        div.classList.add("card");
+        div.innerHTML = `
+          <h3>${servicio.name}</h3>
+          <p>${servicio.description}</p>
+          <p><strong>${servicio.category}</strong> - ${Number(servicio.price).toFixed(2)}€</p>
+          ${servicio.image ? `<img src="http://127.0.0.1:5002${servicio.image}" width="150" />` : ""}
+          <select id="select-${servicio._id}" class="availability-select">
+            <option value="">Selecciona fecha y hora</option>
+            ${disponibilidad
+              .filter(d => new Date(d.dateTime) > new Date())
+              .map(d => {
+                const dt = new Date(d.dateTime);
+                return `<option value="${d.dateTime}">${dt.toLocaleDateString()} ${dt.toTimeString().slice(0, 5)}</option>`;
+              }).join("")}
+          </select>
+          <button onclick="reservarServicio('${servicio._id}')">Reservar</button>
+        `;
+        serviciosContainer.appendChild(div);
+      }
     } catch (err) {
-      console.error("❌ Error cargando disponibilidad:", err);
-      alert("❌ No se pudo obtener la disponibilidad. Verifica si el profesional tiene disponibilidad registrada.");
-    }
-  });
-
-  async function cargarDisponibilidadDelProfesional(professionalId) {
-    try {
-      const res = await fetch(`http://127.0.0.1:5002/api/availability/professional/${professionalId}`);
-
-      if (!res.ok) {
-        throw new Error(`⚠️ No se pudo obtener la disponibilidad (código ${res.status})`);
-      }
-
-      const data = await res.json();
-
-      if (!Array.isArray(data)) {
-        throw new Error("❌ La respuesta del servidor no tiene el formato esperado.");
-      }
-
-      disponibilidadPorFecha = {};
-      dateSelect.innerHTML = `<option value="">Selecciona una fecha</option>`;
-      timeSelect.innerHTML = `<option value="">Selecciona una hora</option>`;
-
-      data.forEach(item => {
-        const dt = new Date(item.dateTime);
-        const fecha = dt.toISOString().split("T")[0];
-        const hora = dt.toTimeString().slice(0, 5);
-
-        if (!disponibilidadPorFecha[fecha]) {
-          disponibilidadPorFecha[fecha] = [];
-        }
-        disponibilidadPorFecha[fecha].push(hora);
-      });
-
-      if (Object.keys(disponibilidadPorFecha).length === 0) {
-        alert("⚠️ El profesional seleccionado no tiene disponibilidad.");
-        return;
-      }
-
-      Object.keys(disponibilidadPorFecha).forEach(fecha => {
-        const option = document.createElement("option");
-        option.value = fecha;
-        option.textContent = fecha;
-        dateSelect.appendChild(option);
-      });
-
-    } catch (error) {
-      alert(`❌ Error al cargar disponibilidad: ${error.message}`);
-      console.error(error);
+      console.error("❌ Error cargando servicios:", err);
+      alert("❌ Error cargando servicios disponibles.");
     }
   }
 
-  dateSelect.addEventListener("change", () => {
-    const fechaSeleccionada = dateSelect.value;
-    const horas = disponibilidadPorFecha[fechaSeleccionada] || [];
-    timeSelect.innerHTML = `<option value="">Selecciona una hora</option>`;
+  window.reservarServicio = async (serviceId) => {
+    const select = document.getElementById(`select-${serviceId}`);
+    const datetime = select.value;
 
-    if (horas.length === 0) {
-      showError(dateError, "⚠️ No hay disponibilidad para esta fecha.");
-    } else {
-      hideError(dateError);
-      horas.forEach(hora => {
-        const option = document.createElement("option");
-        option.value = hora;
-        option.textContent = hora;
-        timeSelect.appendChild(option);
-      });
-    }
-  });
-
-  bookingForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const date = dateSelect.value;
-    const time = timeSelect.value;
-    const service = serviceSelect.value;
-
-    if (!date || !time || !service) {
-      alert("⚠️ Todos los campos son obligatorios.");
-      return;
-    }
+    if (!datetime) return alert("⚠️ Selecciona una fecha y hora válida.");
 
     try {
       const res = await fetch("http://127.0.0.1:5002/api/bookings/create", {
@@ -141,20 +61,19 @@ document.addEventListener("DOMContentLoaded", async () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ date, time, service }),
+        body: JSON.stringify({ service: serviceId, datetime }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      alert("✅ Reserva creada con éxito.");
-      bookingForm.reset();
-      listaReservas.innerHTML = "";
-      await mostrarMisReservas();
+      if (!res.ok) throw new Error(data.message || "Error creando reserva");
 
-    } catch (error) {
-      alert(`❌ Error al crear la reserva: ${error.message}`);
+      alert("✅ Reserva creada con éxito.");
+      await mostrarMisReservas();
+    } catch (err) {
+      console.error("❌ Error reservando:", err);
+      alert("❌ " + err.message);
     }
-  });
+  };
 
   async function mostrarMisReservas() {
     try {
@@ -164,33 +83,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       const data = await res.json();
 
       listaReservas.innerHTML = "";
-      if (!Array.isArray(data) || data.length === 0) {
+      if (!data.length) {
         listaReservas.innerHTML = "<li>No tienes reservas aún.</li>";
         return;
       }
 
       data.forEach(reserva => {
         const li = document.createElement("li");
-        const fecha = new Date(reserva.date).toLocaleDateString("es-ES");
-        li.textContent = `${reserva.service?.name || 'Servicio'} - ${fecha} ${reserva.time}`;
+        const fecha = new Date(`${reserva.date}T${reserva.time}`).toLocaleString("es-ES");
+        li.textContent = `${reserva.service?.name || "Servicio"} - ${fecha}`;
         listaReservas.appendChild(li);
       });
-
-    } catch (error) {
-      alert("❌ Error al cargar tus reservas.");
-      console.error(error);
+    } catch (err) {
+      console.error("❌ Error mostrando reservas:", err);
     }
   }
 
-  function showError(element, message) {
-    element.innerText = message;
-    element.style.display = "block";
-  }
-
-  function hideError(element) {
-    element.style.display = "none";
-  }
-
-  await cargarServicios();
+  await cargarServiciosYDisponibilidad();
   await mostrarMisReservas();
 });

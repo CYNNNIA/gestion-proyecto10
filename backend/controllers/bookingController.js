@@ -4,15 +4,17 @@ const Service = require('../models/Service');
 const Availability = require('../models/Availability');
 
 // Crear reserva
+// backend/controllers/bookingController.js
+
 const createBooking = async (req, res) => {
   try {
-    const { service, date, time } = req.body;
+    const { service, datetime } = req.body;
 
     if (!req.user?.id) {
       return res.status(401).json({ message: "⚠️ No autorizado." });
     }
 
-    if (!service || !date || !time) {
+    if (!service || !datetime) {
       return res.status(400).json({ message: "⚠️ Todos los campos son obligatorios." });
     }
 
@@ -21,7 +23,11 @@ const createBooking = async (req, res) => {
       return res.status(404).json({ message: "⚠️ Servicio no encontrado." });
     }
 
-    const dateTimeToCheck = new Date(`${date}T${time}`);
+    const dateTimeToCheck = new Date(datetime);
+    if (isNaN(dateTimeToCheck)) {
+      return res.status(400).json({ message: "⚠️ Fecha y hora inválidas." });
+    }
+
     if (dateTimeToCheck < new Date()) {
       return res.status(400).json({ message: "⚠️ No puedes reservar en el pasado." });
     }
@@ -37,6 +43,9 @@ const createBooking = async (req, res) => {
         message: "⚠️ Este servicio no está disponible en la fecha y hora seleccionadas.",
       });
     }
+
+    const date = dateTimeToCheck.toISOString().split("T")[0];
+    const time = dateTimeToCheck.toTimeString().slice(0, 5);
 
     const existingBooking = await Booking.findOne({ service, date, time });
     if (existingBooking) {

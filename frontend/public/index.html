@@ -30,7 +30,7 @@
     <div class="card">
       <h2>Soy Cliente</h2>
       <p>Descubre y reserva servicios de belleza y bienestar cerca de ti.</p>
-      <a href="login.html" class="btn secondary">Explorar Servicios</a>
+      <a href="#" onclick="redirigirCliente()" class="btn secondary">Explorar Servicios</a>
     </div>
 
     <div class="card">
@@ -43,7 +43,17 @@
   <!-- Footer dinámico -->
   <footer id="footer"></footer>
 
-  <!-- Script navbar/footer -->
   <script src="js/layout.js"></script>
+  <script>
+    function redirigirCliente() {
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("userRole");
+      if (token && role === "cliente") {
+        window.location.href = "bookings.html";
+      } else {
+        window.location.href = "login.html";
+      }
+    }
+  </script>
 </body>
 </html>
