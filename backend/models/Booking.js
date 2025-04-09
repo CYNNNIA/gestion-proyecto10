@@ -7,22 +7,26 @@ const bookingSchema = new mongoose.Schema({
     required: true 
   },
   service: { 
-    type: mongoose.Schema.Types.ObjectId,  // <-- CAMBIADO
-    ref: 'Service',                        // <-- CAMBIADO
+    type: mongoose.Schema.Types.ObjectId,  
+    ref: 'Service',                        
     required: true
   },
   date: { 
-    type: Date, 
-    required: true 
+    type: String 
   },
   time: { 
-    type: String, 
-    required: true, 
-    match: /^([01]\d|2[0-3]):([0-5]\d)$/
+    type: String 
+  },
+  datetime: {
+    type: Date,
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ["activa", "cancelada"],
+    default: "activa"
   }
 }, { timestamps: true });
-
-bookingSchema.index({ date: 1, time: 1 }, { unique: true });
 
 const Booking = mongoose.model('Booking', bookingSchema);
 module.exports = Booking;

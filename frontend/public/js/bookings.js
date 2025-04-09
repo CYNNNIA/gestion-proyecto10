@@ -1,5 +1,3 @@
-// public/js/bookings.js
-
 document.addEventListener("DOMContentLoaded", async () => {
   const serviciosContainer = document.getElementById("serviciosContainer");
   const listaReservas = document.getElementById("listaReservas");
@@ -22,6 +20,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const disponibilidadRes = await fetch(`http://127.0.0.1:5002/api/availability/service/${servicio._id}`);
         const disponibilidad = await disponibilidadRes.json();
 
+        const disponibilidadFiltrada = disponibilidad.filter(d =>
+          d.service === servicio._id || (d.service?._id && d.service._id === servicio._id)
+        );
+
         const div = document.createElement("div");
         div.classList.add("card");
         div.innerHTML = `
@@ -31,12 +33,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           ${servicio.image ? `<img src="http://127.0.0.1:5002${servicio.image}" width="150" />` : ""}
           <select id="select-${servicio._id}" class="availability-select">
             <option value="">Selecciona fecha y hora</option>
-            ${disponibilidad
-              .filter(d => new Date(d.dateTime) > new Date())
-              .map(d => {
-                const dt = new Date(d.dateTime);
-                return `<option value="${d.dateTime}">${dt.toLocaleDateString()} ${dt.toTimeString().slice(0, 5)}</option>`;
-              }).join("")}
+            ${disponibilidadFiltrada.map(d => {
+              const dt = new Date(d.dateTime);
+              return `<option value="${d.dateTime}">${dt.toLocaleDateString()} ${dt.toTimeString().slice(0, 5)}</option>`;
+            }).join("")}
           </select>
           <button onclick="reservarServicio('${servicio._id}')">Reservar</button>
         `;
@@ -86,6 +86,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       alert("✅ Reserva cancelada.");
+
+      await new Promise(resolve => setTimeout(resolve, 500));
       await cargarServiciosYDisponibilidad();
       await mostrarMisReservas();
     } catch (err) {
@@ -109,10 +111,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       data.forEach(reserva => {
         const li = document.createElement("li");
-        const fecha = new Date(`${reserva.date}T${reserva.time}`).toLocaleString("es-ES");
+        let fecha;
+if (reserva.date && reserva.time) {
+  fecha = new Date(`${reserva.date}T${reserva.time}`).toLocaleString("es-ES");
+} else if (reserva.datetime) {
+  fecha = new Date(reserva.datetime).toLocaleString("es-ES");
+} else {
+  fecha = "Fecha inválida";
+}
+        const statusInfo = reserva.status === "cancelada" ? '<span style="color:red"> (cancelada)</span>' : "";
         li.innerHTML = `
-          <strong>${reserva.service?.name || "Servicio"}</strong> - ${fecha}
-          <button onclick="cancelarReserva('${reserva._id}')">Cancelar</button>
+          <strong>${reserva.service?.name || "Servicio"}</strong> - ${fecha}${statusInfo}
+          ${reserva.status !== "cancelada" ? `<button onclick="cancelarReserva('${reserva._id}')">Cancelar</button>` : ""}
         `;
         listaReservas.appendChild(li);
       });

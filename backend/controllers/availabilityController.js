@@ -1,5 +1,3 @@
-// backend/controllers/availabilityController.js
-
 const Availability = require("../models/Availability");
 
 // Crear disponibilidad (usada al crear servicio)
@@ -14,7 +12,7 @@ exports.addAvailability = async (req, res) => {
     const newAvailability = new Availability({
       professional: req.user.id,
       service,
-      dateTime,
+      dateTime: new Date(dateTime), // ✅ Forzar tipo Date
     });
 
     await newAvailability.save();

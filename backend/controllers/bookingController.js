@@ -1,5 +1,3 @@
-// backend/controllers/bookingController.js
-
 const Booking = require("../models/Booking");
 const Service = require("../models/Service");
 const Availability = require("../models/Availability");
@@ -58,6 +56,8 @@ const createBooking = async (req, res) => {
       service,
       date,
       time,
+      datetime: dateTimeToCheck,
+      status: "activa"
     });
 
     await newBooking.save();
@@ -70,11 +70,50 @@ const createBooking = async (req, res) => {
   }
 };
 
+// Cancelar reserva
+const cancelBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findById(id);
+
+    if (!booking) {
+      return res.status(404).json({ message: "⚠️ Reserva no encontrada." });
+    }
+
+    if (booking.user.toString() !== req.user.id && req.user.role !== "admin") {
+      return res.status(403).json({ message: "⚠️ No tienes permiso para cancelar esta reserva." });
+    }
+
+    // Marcar como cancelada
+    booking.status = "cancelada";
+    await booking.save();
+
+    // Restaurar disponibilidad
+    const service = await Service.findById(booking.service);
+    const restoredDateTime = booking.datetime;
+
+    if (!isNaN(restoredDateTime.getTime())) {
+      await Availability.create({
+        professional: service.professional,
+        service: booking.service,
+        dateTime: restoredDateTime,
+      });
+    }
+
+    res.json({ message: "✅ Reserva cancelada con éxito." });
+  } catch (error) {
+    console.error("❌ Error cancelando la reserva:", error);
+    res.status(500).json({ message: "⚠️ Error del servidor." });
+  }
+};
+
+// Obtener reservas por usuario
 const getBookingsByUser = async (req, res) => {
   try {
     const bookings = await Booking.find({ user: req.user.id })
       .populate("service")
       .populate("user", "name email");
+
     res.json(bookings);
   } catch (error) {
     console.error("❌ Error obteniendo reservas:", error);
@@ -82,6 +121,7 @@ const getBookingsByUser = async (req, res) => {
   }
 };
 
+// Obtener todas las reservas (admin)
 const getAllBookings = async (req, res) => {
   try {
     if (!req.user || req.user.role !== "admin") {
@@ -91,6 +131,7 @@ const getAllBookings = async (req, res) => {
     const bookings = await Booking.find()
       .populate("user", "name email")
       .populate("service", "name");
+
     res.json(bookings);
   } catch (error) {
     console.error("❌ Error obteniendo todas las reservas:", error);
@@ -98,6 +139,7 @@ const getAllBookings = async (req, res) => {
   }
 };
 
+// Obtener reservas del profesional
 const getBookingsForProfessional = async (req, res) => {
   try {
     const services = await Service.find({ professional: req.user.id });
@@ -114,6 +156,7 @@ const getBookingsForProfessional = async (req, res) => {
   }
 };
 
+// Obtener reservas por servicio
 const getBookingsByService = async (req, res) => {
   try {
     const bookings = await Booking.find({ service: req.params.serviceId });
@@ -124,39 +167,7 @@ const getBookingsByService = async (req, res) => {
   }
 };
 
-const cancelBooking = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const booking = await Booking.findById(id);
-
-    if (!booking) {
-      return res.status(404).json({ message: "⚠️ Reserva no encontrada." });
-    }
-
-    if (booking.user.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(403).json({ message: "⚠️ No tienes permiso para cancelar esta reserva." });
-    }
-
-    // ✅ Restaurar disponibilidad al cancelar
-    const service = await Service.findById(booking.service);
-    const restoredDateTime = new Date(`${booking.date}T${booking.time}`);
-
-    if (!isNaN(restoredDateTime.getTime())) {
-      await Availability.create({
-        professional: service.professional,
-        service: booking.service,
-        dateTime: restoredDateTime,
-      });
-    }
-
-    await booking.deleteOne();
-    res.json({ message: "✅ Reserva cancelada con éxito." });
-  } catch (error) {
-    console.error("❌ Error cancelando la reserva:", error);
-    res.status(500).json({ message: "⚠️ Error del servidor." });
-  }
-};
-
+// Actualizar reserva
 const updateBooking = async (req, res) => {
   try {
     const { id } = req.params;
@@ -188,16 +199,21 @@ const updateBooking = async (req, res) => {
       return res.status(400).json({ message: "⚠️ Fecha nueva no disponible." });
     }
 
+    // Restaurar antigua
     await Availability.create({
       service: booking.service,
       professional: service.professional,
-      dateTime: new Date(`${booking.date}T${booking.time}`),
+      dateTime: booking.datetime,
     });
 
+    // Eliminar nueva
     await Availability.findByIdAndDelete(available._id);
 
+    // Actualizar reserva
     booking.date = newDateTime.toISOString().split("T")[0];
     booking.time = newDateTime.toTimeString().slice(0, 5);
+    booking.datetime = newDateTime;
+    booking.status = "activa";
     await booking.save();
 
     res.json({ message: "✅ Reserva actualizada.", booking });
@@ -210,8 +226,8 @@ const updateBooking = async (req, res) => {
 module.exports = {
   createBooking,
   getBookingsByUser,
-  getAllBookings,
   cancelBooking,
+  getAllBookings,
   getBookingsForProfessional,
   updateBooking,
   getBookingsByService,
