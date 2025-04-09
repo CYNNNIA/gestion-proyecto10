@@ -1,13 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi Panel - Cliente</title>
-  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/login.css" />
 </head>
 <body>
-  <nav id="navbar"></nav>
+
+  <!-- 🧿 HEADER CON LOGO Y TÍTULO -->
+  <header class="app-header" style="text-align: center; padding-top: 1rem;">
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="30" cy="30" r="28" stroke="#9C6B4F" stroke-width="3" fill="#fff5f0"/>
+      <path d="M30 15L34 28H26L30 15Z" fill="#9C6B4F"/>
+      <path d="M30 45C33 45 36 42 36 39C36 36 33 33 30 33C27 33 24 36 24 39C24 42 27 45 30 45Z" fill="#9C6B4F"/>
+    </svg>
+    <div class="branding">
+      <h1 class="logo-text">Luméa</h1>
+      <p class="tagline">Agenda Belleza & Bienestar</p>
+    </div>
+  </header>
+
+  <!-- 🌐 NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <ul class="nav-links">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="services.html">Servicios</a></li>
+        <li><a href="bookings.html">Reservar</a></li>
+        <li><a href="login.html">Cerrar Sesión</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 🌟 CONTENIDO PRINCIPAL -->
   <main class="auth-container">
     <h1>Bienvenido, Cliente</h1>
     <p>Aquí puedes ver tu perfil y gestionar tus reservas.</p>
@@ -24,12 +51,12 @@
       <ul id="reservasList"><li>Cargando reservas...</li></ul>
     </section>
 
-    <!-- Modal Edición -->
+    <!-- 🛠️ Modal Edición -->
     <div id="editModal" class="modal" style="display: none;">
       <div class="modal-content">
         <h2>Editar Reserva</h2>
         <form id="editBookingForm">
-          <input type="hidden" id="editBookingId">
+          <input type="hidden" id="editBookingId" />
           <label for="editDatetime">Nueva fecha y hora:</label>
           <select id="editDatetime" required></select>
           <button type="submit">Guardar</button>
@@ -40,11 +67,16 @@
 
     <section>
       <h2>Reservar un Servicio</h2>
-      <a href="bookings.html">Ir a Reservar</a>
+      <a class="btn-secondary" href="bookings.html">Ir a Reservar</a>
     </section>
   </main>
 
-  <footer id="footer"></footer>
+  <!-- 📦 FOOTER -->
+  <footer class="footer">
+    <p>&copy; 2025 Luméa. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- 📜 Scripts -->
   <script src="js/layout.js"></script>
   <script src="js/cliente.js"></script>
 </body>
