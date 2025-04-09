@@ -68,9 +68,28 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!res.ok) throw new Error(data.message || "Error creando reserva");
 
       alert("✅ Reserva creada con éxito.");
+      await cargarServiciosYDisponibilidad();
       await mostrarMisReservas();
     } catch (err) {
       console.error("❌ Error reservando:", err);
+      alert("❌ " + err.message);
+    }
+  };
+
+  window.cancelarReserva = async (id) => {
+    if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
+    try {
+      const res = await fetch(`http://127.0.0.1:5002/api/bookings/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      alert("✅ Reserva cancelada.");
+      await cargarServiciosYDisponibilidad();
+      await mostrarMisReservas();
+    } catch (err) {
+      console.error("❌ Error cancelando reserva:", err);
       alert("❌ " + err.message);
     }
   };
@@ -91,7 +110,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       data.forEach(reserva => {
         const li = document.createElement("li");
         const fecha = new Date(`${reserva.date}T${reserva.time}`).toLocaleString("es-ES");
-        li.textContent = `${reserva.service?.name || "Servicio"} - ${fecha}`;
+        li.innerHTML = `
+          <strong>${reserva.service?.name || "Servicio"}</strong> - ${fecha}
+          <button onclick="cancelarReserva('${reserva._id}')">Cancelar</button>
+        `;
         listaReservas.appendChild(li);
       });
     } catch (err) {
