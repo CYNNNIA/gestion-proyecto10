@@ -1,0 +1,206 @@
+/* BOOKINGS - ESTILOS PERSONALIZADOS */
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #faf4f0;
+  color: #3e2f2f;
+}
+
+.container {
+  max-width: 1500px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #a0705e;
+}
+
+.servicios-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+/* Tarjetas uniformes */
+.card {
+  background-color: #fffaf7;
+  border: 1px solid #e3d6cd;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 400px;
+  box-shadow: 0 4px 10px rgba(90, 70, 58, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card h3 {
+  margin-top: 0;
+  font-weight: 600;
+  color: #a0705e;
+}
+
+.card p {
+  font-size: 0.95rem;
+  color: #6d584b;
+}
+
+.card img {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 0.8rem 0;
+}
+
+.card select,
+.card button {
+  margin-top: 0.8rem;
+}
+
+.card button {
+  background-color: #b1725c;
+  color: white;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.card button:hover {
+  background-color: #995746;
+}
+
+/* 🗓️ Mis Reservas */
+.mis-reservas {
+  margin-top: 3rem;
+  padding-top: 5rem;
+}
+
+.mis-reservas h2 {
+  color: #a0705e;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+#listaReservas {
+  list-style: none;
+  padding: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+#listaReservas li {
+  background-color: #fdf4ee;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-left: 5px solid #a47551;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  transition: background-color 0.3s;
+}
+
+#listaReservas li:hover {
+  background-color: #fceee7;
+}
+
+#listaReservas li button {
+  background-color: #a44f4f;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#listaReservas li button:hover {
+  background-color: #913f3f;
+  transform: scale(1.05);
+}
+
+/* === MENÚ HAMBURGUESA === */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1280px) {
+  .mis-reservas {
+    padding-top: 6rem;
+  }
+}
+
+@media (max-width: 880px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: #b2876f;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links li {
+    text-align: center;
+  }
+
+  .card {
+    width: 90%;
+  }
+
+  #listaReservas li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

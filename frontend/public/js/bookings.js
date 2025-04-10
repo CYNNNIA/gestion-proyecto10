@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const serviciosContainer = document.getElementById("serviciosContainer");
   const listaReservas = document.getElementById("listaReservas");
+  const filtroModalidad = document.getElementById("filtroModalidad");
 
   const token = localStorage.getItem("token");
   if (!token) {
@@ -9,15 +10,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  // Escuchar cambios del filtro
+  if (filtroModalidad) {
+    filtroModalidad.addEventListener("change", () => {
+      cargarServiciosYDisponibilidad();
+    });
+  }
+
   async function cargarServiciosYDisponibilidad() {
     try {
-      const res = await fetch("http://127.0.0.1:5002/api/services");
+      const res = await fetch("http://localhost:5002/api/services");
       const servicios = await res.json();
+
+      const modalidadSeleccionada = filtroModalidad?.value || "todas";
 
       serviciosContainer.innerHTML = "";
 
       for (const servicio of servicios) {
-        const disponibilidadRes = await fetch(`http://127.0.0.1:5002/api/availability/service/${servicio._id}`);
+        if (modalidadSeleccionada !== "todas" && servicio.modality !== modalidadSeleccionada) {
+          continue;
+        }
+
+        const disponibilidadRes = await fetch(`http://localhost:5002/api/availability/service/${servicio._id}`);
         const disponibilidad = await disponibilidadRes.json();
 
         const disponibilidadFiltrada = disponibilidad.filter(d =>
@@ -30,7 +44,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           <h3>${servicio.name}</h3>
           <p>${servicio.description}</p>
           <p><strong>${servicio.category}</strong> - ${Number(servicio.price).toFixed(2)}€</p>
-          ${servicio.image ? `<img src="http://127.0.0.1:5002${servicio.image}" width="150" />` : ""}
+          <p><em>${servicio.modality === "online" ? "🌐 Online" : "🏠 Presencial"}</em></p>
+          ${servicio.image ? `<img src="http://localhost:5002${servicio.image}" width="150" />` : ""}
           <select id="select-${servicio._id}" class="availability-select">
             <option value="">Selecciona fecha y hora</option>
             ${disponibilidadFiltrada.map(d => {
@@ -55,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!datetime) return alert("⚠️ Selecciona una fecha y hora válida.");
 
     try {
-      const res = await fetch("http://127.0.0.1:5002/api/bookings/create", {
+      const res = await fetch("http://localhost:5002/api/bookings/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.cancelarReserva = async (id) => {
     if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
     try {
-      const res = await fetch(`http://127.0.0.1:5002/api/bookings/${id}`, {
+      const res = await fetch(`http://localhost:5002/api/bookings/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -98,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function mostrarMisReservas() {
     try {
-      const res = await fetch("http://127.0.0.1:5002/api/bookings/user", {
+      const res = await fetch("http://localhost:5002/api/bookings/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -112,13 +127,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       data.forEach(reserva => {
         const li = document.createElement("li");
         let fecha;
-if (reserva.date && reserva.time) {
-  fecha = new Date(`${reserva.date}T${reserva.time}`).toLocaleString("es-ES");
-} else if (reserva.datetime) {
-  fecha = new Date(reserva.datetime).toLocaleString("es-ES");
-} else {
-  fecha = "Fecha inválida";
-}
+        if (reserva.date && reserva.time) {
+          fecha = new Date(`${reserva.date}T${reserva.time}`).toLocaleString("es-ES");
+        } else if (reserva.datetime) {
+          fecha = new Date(reserva.datetime).toLocaleString("es-ES");
+        } else {
+          fecha = "Fecha inválida";
+        }
         const statusInfo = reserva.status === "cancelada" ? '<span style="color:red"> (cancelada)</span>' : "";
         li.innerHTML = `
           <strong>${reserva.service?.name || "Servicio"}</strong> - ${fecha}${statusInfo}

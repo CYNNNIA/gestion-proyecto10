@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi Panel - Cliente</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="css/login.css" />
+  <link rel="stylesheet" href="css/cliente.css" />
 </head>
 <body>
 
-  <!-- 🧿 HEADER CON LOGO Y TÍTULO -->
-  <header class="app-header" style="text-align: center; padding-top: 1rem;">
+  <!-- 🧿 LOGO Y MARCA -->
+  <header class="app-header">
     <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="30" cy="30" r="28" stroke="#9C6B4F" stroke-width="3" fill="#fff5f0"/>
       <path d="M30 15L34 28H26L30 15Z" fill="#9C6B4F"/>
@@ -25,9 +25,14 @@
   <!-- 🌐 NAVBAR -->
   <nav class="navbar">
     <div class="container">
+      <div class="brand-title">Luméa</div>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
       <ul class="nav-links">
         <li><a href="index.html">Inicio</a></li>
-        <li><a href="services.html">Servicios</a></li>
         <li><a href="bookings.html">Reservar</a></li>
         <li><a href="login.html">Cerrar Sesión</a></li>
       </ul>
@@ -51,7 +56,7 @@
       <ul id="reservasList"><li>Cargando reservas...</li></ul>
     </section>
 
-    <!-- 🛠️ Modal Edición -->
+    <!-- 🛠️ MODAL -->
     <div id="editModal" class="modal" style="display: none;">
       <div class="modal-content">
         <h2>Editar Reserva</h2>
@@ -77,6 +82,11 @@
   </footer>
 
   <!-- 📜 Scripts -->
+  <script>
+    function toggleMenu() {
+      document.querySelector('.nav-links').classList.toggle('active');
+    }
+  </script>
   <script src="js/layout.js"></script>
   <script src="js/cliente.js"></script>
 </body>

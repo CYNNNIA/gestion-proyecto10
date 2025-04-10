@@ -2,53 +2,82 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Luméa - Reserva tu Bienestar</title>
-  <link rel="stylesheet" href="css/landing.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/index.css" />
 </head>
 <body>
-  <!-- Navbar dinámica -->
-  <nav id="navbar"></nav>
 
-  <header class="header">
-    
+  <!-- 🌟 LOGO Y ENCABEZADO -->
+  <header class="app-header">
     <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="30" cy="30" r="28" stroke="#9C6B4F" stroke-width="3" fill="#fff5f0"/>
       <path d="M30 15L34 28H26L30 15Z" fill="#9C6B4F"/>
       <path d="M30 45C33 45 36 42 36 39C36 36 33 33 30 33C27 33 24 36 24 39C24 42 27 45 30 45Z" fill="#9C6B4F"/>
     </svg>
-    <h1 class="logo">Luméa</h1>
-    <p class="tagline">Tu espacio de belleza y bienestar</p>
+    <div class="branding">
+      <h1 class="logo-text">Luméa</h1>
+      <p class="tagline">Tu espacio de belleza y bienestar</p>
+    </div>
   </header>
 
-  <main class="main-container">
-    <div class="card">
-      <h2>Soy Profesional</h2>
-      <p>Gestiona tus servicios, disponibilidad y reservas desde tu panel.</p>
-      <a href="login.html" class="btn">Entrar como Profesional</a>
+  <!-- 🌐 NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="brand-title">Luméa</div>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="login.html">Iniciar Sesión</a></li>
+        <li><a href="register.html">Registrarse</a></li>
+      </ul>
     </div>
+  </nav>
 
-    <div class="card">
-      <h2>Soy Cliente</h2>
-      <p>Descubre y reserva servicios de belleza y bienestar cerca de ti.</p>
-      <a href="#" onclick="redirigirCliente()" class="btn secondary">Explorar Servicios</a>
-    </div>
+  <!-- ✨ CUERPO PRINCIPAL -->
+  <main class="landing-main">
+    <section class="card-grid">
+      <div class="card">
+        <h2>Soy Profesional</h2>
+        <p>Gestiona tus servicios, horarios y clientes desde tu panel.</p>
+        <a href="login.html" class="btn">Entrar como Profesional</a>
+      </div>
 
-    <div class="card">
-      <h2>¿Aún no tienes cuenta?</h2>
-      <p>Regístrate y comienza a reservar o gestionar tus servicios.</p>
-      <a href="register.html" class="btn">Crear Cuenta</a>
-    </div>
+      <div class="card">
+        <h2>Soy Cliente</h2>
+        <p>Explora servicios de belleza y bienestar, y reserva fácilmente.</p>
+        <a href="#" onclick="redirigirCliente()" class="btn secondary">Explorar Servicios</a>
+      </div>
+
+      <div class="card">
+        <h2>¿Nuevo por aquí?</h2>
+        <p>Crea una cuenta y empieza a disfrutar de Luméa hoy mismo.</p>
+        <a href="register.html" class="btn">Crear Cuenta</a>
+      </div>
+    </section>
   </main>
 
-  <!-- Footer dinámico -->
-  <footer id="footer"></footer>
+  <!-- 📦 FOOTER -->
+  <footer class="footer">
+    <p>&copy; 2025 Luméa. Todos los derechos reservados.</p>
+  </footer>
 
-  <script src="js/layout.js"></script>
   <script>
+    function toggleMenu() {
+      document.querySelector('.nav-links').classList.toggle('active');
+    }
+  </script>
+  <script>
+    function toggleMenu() {
+      document.querySelector('.nav-links').classList.toggle('active');
+    }
+  
     function redirigirCliente() {
       const token = localStorage.getItem("token");
       const role = localStorage.getItem("userRole");
+  
       if (token && role === "cliente") {
         window.location.href = "bookings.html";
       } else {

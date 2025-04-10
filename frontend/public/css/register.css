@@ -1,0 +1,145 @@
+/* === register.css === */
+
+/* 🎨 RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  font-family: 'Poppins', sans-serif;
+  background-color: #faf4f0;
+  color: #3e2f2f;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔝 HEADER */
+.header {
+  background-color: #9C6B4F;
+  text-align: center;
+  padding: 1.5rem 1rem 1rem;
+  color: white;
+}
+
+.logo {
+  font-family: 'Georgia', serif;
+  font-size: 2.5rem;
+  color: #fff1e6;
+  letter-spacing: 1px;
+}
+
+.tagline {
+  font-size: 1rem;
+  color: #fce7dc;
+}
+
+/* 🧭 NAVBAR */
+nav {
+  background-color: #b2876f;
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.2rem;
+}
+
+.nav-links li a {
+  color: white;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+  color: #ffe1c1;
+}
+
+/* 📋 FORMULARIO */
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-container {
+  background: #fffaf7;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.auth-container h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #a0705e;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  color: #4c3228;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #e3d6cd;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 1rem;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #b1725c;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+button[type="submit"]:hover {
+  background-color: #995746;
+}
+
+/* 🧭 Alternativa de login */
+#authToggleText {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+#authToggleText a {
+  color: #a0705e;
+  text-decoration: underline;
+}
+
+/* 🦶 FOOTER */
+footer {
+  background-color: #3e2f2f;
+  color: #f3e9e1;
+  text-align: center;
+  padding: 1rem;
+  font-size: 14px;
+}

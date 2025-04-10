@@ -1,38 +1,77 @@
-/* public/css/landing.css */
-
-/* 🎨 Fuente moderna y neutra */
-body {
+/* 🌿 RESET + GLOBAL */
+* {
   margin: 0;
-  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
-  background-color: #fef9f5;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #fdf8f4;
   color: #5a463a;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* 🧭 Header */
+/* 🧿 HEADER (LOGO ENCIMA DE NAVBAR) */
 .header {
-  background-color: #f1e4db;
   text-align: center;
   padding: 2rem 1rem 1rem;
+  background-color: #f1e4db;
   box-shadow: 0 2px 10px rgba(90, 70, 58, 0.1);
 }
 
 .logo {
   font-size: 2.5rem;
+  font-weight: bold;
   color: #b2836d;
-  font-weight: 700;
-  margin: 0;
+  margin: 0.5rem 0 0;
+  font-family: "Georgia", serif;
 }
 
 .tagline {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #7c675a;
   margin-top: 0.3rem;
 }
 
-/* 🖼️ Main Container */
+/* 🌐 NAVBAR */
+.navbar {
+  background-color: #a47551;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.navbar .container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-links li a {
+  color: #fff3e6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+  color: #ffe1c1;
+}
+
+/* 🧩 MAIN CONTAINER */
 .main-container {
   flex: 1;
   display: grid;
@@ -43,6 +82,7 @@ body {
   margin: auto;
 }
 
+/* 💳 CARD */
 .card {
   background-color: #fffaf7;
   border: 1px solid #e3d6cd;
@@ -50,6 +90,11 @@ body {
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(90, 70, 58, 0.08);
   text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
 }
 
 .card h2 {
@@ -58,17 +103,18 @@ body {
 }
 
 .card p {
+  font-size: 1rem;
   color: #6d584b;
   margin-bottom: 1.5rem;
-  font-size: 1rem;
 }
 
+/* 🎯 BOTONES */
 .btn {
   display: inline-block;
   padding: 10px 20px;
   background-color: #b2836d;
   color: white;
-  border-radius: 6px;
+  border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
   transition: background 0.3s ease;
@@ -86,11 +132,12 @@ body {
   background-color: #c78b81;
 }
 
-/* 📍 Footer */
+/* 🦶 FOOTER */
 .footer {
   text-align: center;
   background-color: #eee2db;
   color: #5a463a;
   padding: 1rem;
   font-size: 0.9rem;
+  margin-top: auto;
 }
