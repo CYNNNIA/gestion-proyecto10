@@ -71,6 +71,7 @@ const createBooking = async (req, res) => {
 };
 
 // Cancelar reserva
+// Cancelar reserva
 const cancelBooking = async (req, res) => {
   try {
     const { id } = req.params;
@@ -80,7 +81,12 @@ const cancelBooking = async (req, res) => {
       return res.status(404).json({ message: "⚠️ Reserva no encontrada." });
     }
 
-    if (booking.user.toString() !== req.user.id && req.user.role !== "admin") {
+    const service = await Service.findById(booking.service);
+
+    // 👉 PERMITIR que el profesional dueño del servicio pueda cancelar
+    const isOwner = service.professional.toString() === req.user.id;
+
+    if (booking.user.toString() !== req.user.id && req.user.role !== "admin" && !isOwner) {
       return res.status(403).json({ message: "⚠️ No tienes permiso para cancelar esta reserva." });
     }
 
@@ -88,19 +94,17 @@ const cancelBooking = async (req, res) => {
     booking.status = "cancelada";
     await booking.save();
 
-    // Restaurar disponibilidad
-    const service = await Service.findById(booking.service);
-    const restoredDateTime = booking.datetime;
-
-    if (!isNaN(restoredDateTime.getTime())) {
+    // Restaurar disponibilidad si la fecha es válida
+    if (!isNaN(booking.datetime.getTime())) {
       await Availability.create({
         professional: service.professional,
         service: booking.service,
-        dateTime: restoredDateTime,
+        dateTime: booking.datetime,
       });
     }
 
     res.json({ message: "✅ Reserva cancelada con éxito." });
+
   } catch (error) {
     console.error("❌ Error cancelando la reserva:", error);
     res.status(500).json({ message: "⚠️ Error del servidor." });

@@ -1,5 +1,3 @@
-// public/js/dashboard-profesional.js
-
 const token = localStorage.getItem("token");
 if (!token) {
   alert("⚠️ Debes iniciar sesión.");
@@ -51,18 +49,20 @@ async function loadServices() {
       <h3>${s.name}</h3>
       <p>${s.description}</p>
       <p>${s.category} - ${Number(s.price).toFixed(2)}€</p>
-      ${s.image ? `<img src="http://localhost:5002${s.image}" width="150" />` : ""}
+      ${s.image ? `<img src="http://localhost:5002${s.image}" alt="Servicio" />` : ""}
       <input type="datetime-local" id="date-${s._id}" />
       <button onclick="addDate('${s._id}')">➕ Añadir Fecha</button>
       <ul>
         ${(s.availability || []).map(a => `
           <li>
-            ${new Date(a.dateTime).toLocaleString()}
+            <span>${new Date(a.dateTime).toLocaleString()}</span>
             <button onclick="deleteAvailability('${a._id}')">❌</button>
           </li>`).join("")}
       </ul>
-      <button onclick="deleteService('${s._id}')">Eliminar</button>
-      <button onclick="editService('${s._id}')">Editar</button>
+      <div class="action-buttons">
+        <button onclick="deleteService('${s._id}')">Eliminar</button>
+        <button onclick="editService('${s._id}')">Editar</button>
+      </div>
     `;
     serviceList.appendChild(div);
 
@@ -97,8 +97,6 @@ window.deleteAvailability = async id => {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
-  const data = await res.json();
-  if (!res.ok) return alert("❌ " + (data.message || "Error eliminando disponibilidad"));
   await loadServices();
 };
 
@@ -187,19 +185,47 @@ async function loadReservas() {
 
 function showReservas() {
   const selectedId = filtroServicio.value;
-  const filtradas = selectedId ? reservas.filter(r => r.service._id === selectedId) : reservas;
+  const filtradas = reservas
+    .filter(r => r.status !== "cancelada") // Excluir canceladas
+    .filter(r => !selectedId || r.service._id === selectedId);
+
   reservasList.innerHTML = "";
+
   if (filtradas.length === 0) {
     reservasList.innerHTML = "<li>No hay reservas.</li>";
     return;
   }
+
   filtradas.forEach(r => {
     const fecha = new Date(`${r.date}T${r.time}`).toLocaleString("es-ES");
     const li = document.createElement("li");
-    li.textContent = `${r.service.name} - ${fecha} | Cliente: ${r.user.name} (${r.user.email})`;
+    li.innerHTML = `
+      <strong>${r.service.name}</strong> - ${fecha}<br>
+      Cliente: ${r.user.name} (${r.user.email})
+      <button onclick="cancelarReservaProfesional('${r._id}')">Cancelar</button>
+    `;
     reservasList.appendChild(li);
   });
 }
+
+window.cancelarReservaProfesional = async id => {
+  if (!confirm("¿Cancelar esta reserva?")) return;
+  
+  const res = await fetch(`http://localhost:5002/api/bookings/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert("❌ Error al cancelar reserva: " + (data.message || "Error desconocido"));
+    return;
+  }
+
+  alert("✅ Reserva cancelada correctamente.");
+  await loadReservas(); // 🟢 ACTUALIZAR LISTA DESPUÉS DE CANCELAR
+};
 
 filtroServicio.addEventListener("change", showReservas);
 
