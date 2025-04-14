@@ -3,7 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
-const connectDB = require('./config/db');
+const connectDB = require('./backend/config/db');
 
 dotenv.config();
 connectDB();
@@ -19,11 +19,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 
 // Rutas API
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/bookings', require('./routes/bookingRoutes'));
-app.use('/api/services', require('./routes/serviceRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/availability', require('./routes/availabilityRoutes'));
+app.use('/api/auth', require('./backend/routes/authRoutes'));
+app.use('/api/bookings', require('./backend/routes/bookingRoutes'));
+app.use('/api/services', require('./backend/routes/serviceRoutes'));
+app.use('/api/users', require('./backend/routes/userRoutes'));
+app.use('/api/availability', require('./backend/routes/availabilityRoutes'));
 
 // Fallback SPA frontend
 app.get(/^\/(?!api|uploads|js|css|img).*/, (req, res) => {
