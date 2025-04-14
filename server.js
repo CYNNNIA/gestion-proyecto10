@@ -1,40 +1,47 @@
 const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
 const path = require("path");
 const dotenv = require("dotenv");
-const cors = require("cors");
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 10000;
 
-// Middleware
+// Middlewares
 app.use(cors());
 app.use(express.json());
+
+// Conexión a MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("🟢 Conectado a MongoDB"))
+  .catch((err) => console.error("❌ Error de conexión:", err));
+
+// Rutas del backend
+const authRoutes = require("./backend/routes/authRoutes");
+const bookingRoutes = require("./backend/routes/bookingRoutes");
+const serviceRoutes = require("./backend/routes/serviceRoutes");
+const availabilityRoutes = require("./backend/routes/availabilityRoutes");
+
+app.use("/api/auth", authRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/services", serviceRoutes);
+app.use("/api/availability", availabilityRoutes);
+
+// Archivos subidos
 app.use("/uploads", express.static(path.join(__dirname, "backend/uploads")));
 
-// 🔌 Rutas backend
-app.use("/api/auth", require("./backend/routes/authRoutes"));
-app.use("/api/services", require("./backend/routes/serviceRoutes"));
-app.use("/api/availability", require("./backend/routes/availabilityRoutes"));
-app.use("/api/bookings", require("./backend/routes/bookingRoutes"));
+// Archivos estáticos del frontend
+app.use(express.static(path.join(__dirname, "frontend", "public")));
 
-// 👉 Sirve archivos estáticos desde frontend/public
-app.use(express.static(path.join(__dirname, "frontend/public")));
-
-// ⚠️ Para cualquier ruta que no sea API, devuelve index.html del frontend
+// Redirección a index.html para rutas no manejadas (SPA fallback)
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend/public", "index.html"));
+  res.sendFile(path.join(__dirname, "frontend", "public", "index.html"));
 });
 
-// DB Connection + Start Server
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log("🟢 Conectado a MongoDB");
-  app.listen(PORT, () => console.log(`🚀 Servidor corriendo en puerto ${PORT}`));
-}).catch((err) => {
-  console.error("❌ Error al conectar a MongoDB:", err);
+// Puerto
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });
