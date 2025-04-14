@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/dashboard-profesional.css" />
 </head>
 <body>
+  <!-- 🧿 Header -->
   <header class="app-header">
     <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="30" cy="30" r="28" stroke="#9C6B4F" stroke-width="3" fill="#fff5f0"/>
@@ -20,15 +21,25 @@
     </div>
   </header>
 
+  <!-- 🌐 Navbar -->
   <nav class="navbar">
     <div class="container">
-      <div class="nav-links">
-        <a href="dashboard-profesional.html">Mi Panel</a>
-        <a href="#" onclick="logout()">Cerrar Sesión</a>
+      <div class="brand-title">Luméa</div>
+
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
+
+      <ul class="nav-links">
+        <li><a href="dashboard-profesional.html">Mi Panel</a></li>
+        <li><a href="#" onclick="logout()">Cerrar Sesión</a></li>
+      </ul>
     </div>
   </nav>
 
+  <!-- 🧱 Contenido principal -->
   <main class="dashboard-container">
     <section class="bienvenida">
       <h1>Bienvenido, <span id="professionalName">Profesional</span></h1>
@@ -95,10 +106,17 @@
     </section>
   </main>
 
+  <!-- 📦 Footer -->
   <footer class="footer">
     <p>&copy; 2025 Luméa</p>
   </footer>
 
+  <!-- 📜 Scripts -->
   <script src="js/dashboard-profesional.js"></script>
+  <script>
+    function toggleMenu() {
+      document.querySelector('.nav-links').classList.toggle('active');
+    }
+  </script>
 </body>
 </html>
