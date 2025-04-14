@@ -16,13 +16,12 @@ const reservasList = document.getElementById("listaReservasRecibidas");
 const filtroServicio = document.getElementById("filtroServicio");
 const professionalName = document.getElementById("professionalName");
 const firstAvailabilityInput = document.getElementById("firstAvailabilityInput");
-const API_URL = "https://gestion-proyecto10.onrender.com";
 
 let reservas = [];
 let editingServiceId = null;
 
 async function getProfile() {
-  const res = await fetch(`${API_URL}/api/auth/me`, {
+  const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   const data = await res.json();
@@ -35,7 +34,7 @@ function logout() {
 }
 
 async function loadServices() {
-  const res = await fetch("http://localhost:5002/api/services/my-services", {
+  const res = await fetch(`${API_BASE_URL}/api/services/my-services`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   const services = await res.json();
@@ -50,7 +49,7 @@ async function loadServices() {
       <h3>${s.name}</h3>
       <p>${s.description}</p>
       <p>${s.category} - ${Number(s.price).toFixed(2)}€</p>
-      ${s.image ? `<img src="http://localhost:5002${s.image}" alt="Servicio" />` : ""}
+      ${s.image ? `<img src="${API_BASE_URL}${s.image}" alt="Servicio" />` : ""}
       <input type="datetime-local" id="date-${s._id}" />
       <button onclick="addDate('${s._id}')">➕ Añadir Fecha</button>
       <ul>
@@ -79,7 +78,7 @@ window.addDate = async serviceId => {
   const datetime = input.value;
   if (!datetime || new Date(datetime) < new Date()) return alert("⚠️ Fecha inválida");
 
-  const res = await fetch("http://localhost:5002/api/availability/add", {
+  const res = await fetch(`${API_BASE_URL}/api/availability/add`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -94,7 +93,7 @@ window.addDate = async serviceId => {
 };
 
 window.deleteAvailability = async id => {
-  const res = await fetch(`http://localhost:5002/api/availability/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/api/availability/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -102,7 +101,7 @@ window.deleteAvailability = async id => {
 };
 
 async function editService(id) {
-  const res = await fetch(`http://localhost:5002/api/services/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/api/services/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   const s = await res.json();
@@ -118,7 +117,7 @@ async function editService(id) {
 
 async function deleteService(id) {
   if (!confirm("¿Eliminar este servicio?")) return;
-  await fetch(`http://localhost:5002/api/services/${id}`, {
+  await fetch(`${API_BASE_URL}/api/services/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -147,8 +146,8 @@ serviceForm.addEventListener("submit", async e => {
   formData.append("availability", firstAvailability);
 
   const url = editingServiceId
-    ? `http://localhost:5002/api/services/${editingServiceId}`
-    : "http://localhost:5002/api/services/create";
+    ? `${API_BASE_URL}/api/services/${editingServiceId}`
+    : `${API_BASE_URL}/api/services/create`;
 
   const method = editingServiceId ? "PUT" : "POST";
 
@@ -177,7 +176,7 @@ cancelEditBtn.addEventListener("click", () => {
 });
 
 async function loadReservas() {
-  const res = await fetch("http://localhost:5002/api/bookings/professional", {
+  const res = await fetch(`${API_BASE_URL}/api/bookings/professional`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   reservas = await res.json();
@@ -187,7 +186,7 @@ async function loadReservas() {
 function showReservas() {
   const selectedId = filtroServicio.value;
   const filtradas = reservas
-    .filter(r => r.status !== "cancelada") // Excluir canceladas
+    .filter(r => r.status !== "cancelada")
     .filter(r => !selectedId || r.service._id === selectedId);
 
   reservasList.innerHTML = "";
@@ -212,7 +211,7 @@ function showReservas() {
 window.cancelarReservaProfesional = async id => {
   if (!confirm("¿Cancelar esta reserva?")) return;
   
-  const res = await fetch(`http://localhost:5002/api/bookings/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/api/bookings/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -225,7 +224,7 @@ window.cancelarReservaProfesional = async id => {
   }
 
   alert("✅ Reserva cancelada correctamente.");
-  await loadReservas(); // 🟢 ACTUALIZAR LISTA DESPUÉS DE CANCELAR
+  await loadReservas();
 };
 
 filtroServicio.addEventListener("change", showReservas);

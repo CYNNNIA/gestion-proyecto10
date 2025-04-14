@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const serviciosContainer = document.getElementById("serviciosContainer");
   const listaReservas = document.getElementById("listaReservas");
   const filtroModalidad = document.getElementById("filtroModalidad");
-  const API_URL = "https://gestion-proyecto10.onrender.com";
 
   const token = localStorage.getItem("token");
   if (!token) {
@@ -11,7 +10,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Escuchar cambios del filtro
   if (filtroModalidad) {
     filtroModalidad.addEventListener("change", () => {
       cargarServiciosYDisponibilidad();
@@ -20,11 +18,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function cargarServiciosYDisponibilidad() {
     try {
-      const res = await fetch("${API_URL}/api/services");
+      const res = await fetch(`${API_BASE_URL}/api/services`);
       const servicios = await res.json();
 
       const modalidadSeleccionada = filtroModalidad?.value || "todas";
-
       serviciosContainer.innerHTML = "";
 
       for (const servicio of servicios) {
@@ -32,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           continue;
         }
 
-        const disponibilidadRes = await fetch(`${API_URL}/api/availability/service/${servicio._id}`);
+        const disponibilidadRes = await fetch(`${API_BASE_URL}/api/availability/service/${servicio._id}`);
         const disponibilidad = await disponibilidadRes.json();
 
         const disponibilidadFiltrada = disponibilidad.filter(d =>
@@ -46,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <p>${servicio.description}</p>
           <p><strong>${servicio.category}</strong> - ${Number(servicio.price).toFixed(2)}€</p>
           <p><em>${servicio.modality === "online" ? "🌐 Online" : "🏠 Presencial"}</em></p>
-          ${servicio.image ? `<img src="http://localhost:5002${servicio.image}" width="150" />` : ""}
+          ${servicio.image ? `<img src="${API_BASE_URL}${servicio.image}" width="150" />` : ""}
           <select id="select-${servicio._id}" class="availability-select">
             <option value="">Selecciona fecha y hora</option>
             ${disponibilidadFiltrada.map(d => {
@@ -71,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!datetime) return alert("⚠️ Selecciona una fecha y hora válida.");
 
     try {
-      const res = await fetch("http://localhost:5002/api/bookings/create", {
+      const res = await fetch(`${API_BASE_URL}/api/bookings/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.cancelarReserva = async (id) => {
     if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
     try {
-      const res = await fetch(`http://localhost:5002/api/bookings/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/bookings/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -114,7 +111,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function mostrarMisReservas() {
     try {
-      const res = await fetch("http://localhost:5002/api/bookings/user", {
+      const res = await fetch(`${API_BASE_URL}/api/bookings/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

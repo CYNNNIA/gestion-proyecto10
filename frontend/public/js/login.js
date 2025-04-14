@@ -1,4 +1,3 @@
-// public/js/login.js
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -11,7 +10,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
   }
 
   try {
-    const res = await fetch("http://localhost:5002/api/auth/login", {
+    const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -25,6 +24,8 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     }
 
     localStorage.setItem("token", data.token);
+    localStorage.setItem("userRole", data.user.role); // 👈 Necesario para layout.js
+
     window.location.href = data.user.role === "profesional"
       ? "dashboard-profesional.html"
       : "cliente.html";

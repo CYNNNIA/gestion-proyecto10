@@ -1,4 +1,8 @@
-// ✅ Archivo: js/api.js
+// ✅ Archivo: public/js/api.js
+
+// Asegúrate de tener API_BASE_URL definido globalmente desde config.js
+// Si usas ES Modules, puedes importarlo también
+// import { API_BASE_URL } from './config.js'
 
 export async function apiRequest(endpoint, method = "GET", data = null, withAuth = false) {
   const options = {
@@ -19,12 +23,17 @@ export async function apiRequest(endpoint, method = "GET", data = null, withAuth
     options.body = JSON.stringify(data);
   }
 
-  const response = await fetch(`http://127.0.0.1:5002/api${endpoint}`, options);
-  const result = await response.json();
+  try {
+    const response = await fetch(`${API_BASE_URL}/api${endpoint}`, options);
+    const result = await response.json();
 
-  if (!response.ok) {
-    throw new Error(result.message || "Error en la solicitud");
+    if (!response.ok) {
+      throw new Error(result.message || "Error en la solicitud");
+    }
+
+    return result;
+  } catch (error) {
+    console.error(`❌ Error al hacer la petición a ${endpoint}:`, error);
+    throw error;
   }
-
-  return result;
 }

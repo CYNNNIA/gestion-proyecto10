@@ -5,9 +5,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Registrarse - Luméa</title>
+  <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/register.css" />
 </head>
 <body>
+
+  <!-- Navbar dinámico -->
+  <div id="navbar"></div>
+
+  <!-- Encabezado -->
   <header class="header">
     <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="30" cy="30" r="28" stroke="#9C6B4F" stroke-width="3" fill="#fff5f0"/>
@@ -18,12 +24,7 @@
     <p class="tagline">Tu espacio de belleza y bienestar</p>
   </header>
 
-  <nav>
-    <ul class="nav-links">
-      <li><a href="index.html">Inicio</a></li>
-    </ul>
-  </nav>
-
+  <!-- Contenido -->
   <main>
     <div class="auth-container">
       <h1>Crear Cuenta</h1>
@@ -49,15 +50,17 @@
           </select>
         </div>
         <button type="submit">Registrarse</button>
-        <p id="authToggleText">Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+        <p id="authToggleText">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
       </form>
     </div>
   </main>
 
-  <footer>
-    <p>&copy; 2025 Luméa</p>
-  </footer>
+  <!-- Footer dinámico -->
+  <div id="footer"></div>
 
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/register.js"></script>
 </body>
 </html>

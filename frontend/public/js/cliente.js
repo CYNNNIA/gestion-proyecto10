@@ -16,7 +16,7 @@ const editDatetime = document.getElementById("editDatetime");
 
 async function loadClientProfile() {
   try {
-    const res = await fetch("http://localhost:5002/api/auth/me", {
+    const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -30,7 +30,7 @@ async function loadClientProfile() {
 
 async function cargarReservas() {
   try {
-    const res = await fetch("http://localhost:5002/api/bookings/user", {
+    const res = await fetch(`${API_BASE_URL}/api/bookings/user`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const reservas = await res.json();
@@ -64,7 +64,7 @@ window.abrirModalEdicion = async (bookingId, serviceId) => {
   editDatetime.innerHTML = "";
 
   try {
-    const res = await fetch(`http://localhost:5002/api/availability/service/${serviceId}`);
+    const res = await fetch(`${API_BASE_URL}/api/availability/service/${serviceId}`);
     const disponibilidad = await res.json();
 
     const ahora = new Date();
@@ -108,7 +108,7 @@ editBookingForm.onsubmit = async e => {
   }
 
   try {
-    const res = await fetch(`http://localhost:5002/api/bookings/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/api/bookings/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -136,7 +136,7 @@ window.cancelarReserva = async id => {
   if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
 
   try {
-    const res = await fetch(`http://localhost:5002/api/bookings/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/api/bookings/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });

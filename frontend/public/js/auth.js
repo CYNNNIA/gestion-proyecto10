@@ -2,7 +2,6 @@
 
 const form = document.getElementById("authForm");
 const errorMessage = document.getElementById("errorMessage");
-const API_URL = "https://gestion-proyecto10.onrender.com";
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -18,9 +17,8 @@ form.addEventListener("submit", async (e) => {
 
   const isRegistering = !!nameInput && !!roleInput;
 
-  const url = isRegistering
-    ? "http://localhost:5002/api/auth/register"
-    : "http://localhost:5002/api/auth/login";
+  const endpoint = isRegistering ? "/auth/register" : "/auth/login";
+  const url = `${API_BASE_URL}/api${endpoint}`;
 
   const payload = isRegistering
     ? { name, email, password, role }
@@ -45,6 +43,8 @@ form.addEventListener("submit", async (e) => {
 
     if (!isRegistering) {
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userRole", data.user.role); // 👈 necesario para layout.js o navbar dinámica
+
       const redir = data.user.role === "profesional"
         ? "dashboard-profesional.html"
         : "cliente.html";
