@@ -2,6 +2,7 @@
 
 const form = document.getElementById("authForm");
 const errorMessage = document.getElementById("errorMessage");
+const API_URL = "https://gestion-proyecto10.onrender.com";
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();

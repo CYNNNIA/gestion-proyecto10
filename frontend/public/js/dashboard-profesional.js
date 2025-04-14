@@ -16,12 +16,13 @@ const reservasList = document.getElementById("listaReservasRecibidas");
 const filtroServicio = document.getElementById("filtroServicio");
 const professionalName = document.getElementById("professionalName");
 const firstAvailabilityInput = document.getElementById("firstAvailabilityInput");
+const API_URL = "https://gestion-proyecto10.onrender.com";
 
 let reservas = [];
 let editingServiceId = null;
 
 async function getProfile() {
-  const res = await fetch("http://localhost:5002/api/auth/me", {
+  const res = await fetch(`${API_URL}/api/auth/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   const data = await res.json();

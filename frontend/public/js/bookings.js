@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const serviciosContainer = document.getElementById("serviciosContainer");
   const listaReservas = document.getElementById("listaReservas");
   const filtroModalidad = document.getElementById("filtroModalidad");
+  const API_URL = "https://gestion-proyecto10.onrender.com";
 
   const token = localStorage.getItem("token");
   if (!token) {
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function cargarServiciosYDisponibilidad() {
     try {
-      const res = await fetch("http://localhost:5002/api/services");
+      const res = await fetch("${API_URL}/api/services");
       const servicios = await res.json();
 
       const modalidadSeleccionada = filtroModalidad?.value || "todas";
@@ -31,7 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           continue;
         }
 
-        const disponibilidadRes = await fetch(`http://localhost:5002/api/availability/service/${servicio._id}`);
+        const disponibilidadRes = await fetch(`${API_URL}/api/availability/service/${servicio._id}`);
         const disponibilidad = await disponibilidadRes.json();
 
         const disponibilidadFiltrada = disponibilidad.filter(d =>
