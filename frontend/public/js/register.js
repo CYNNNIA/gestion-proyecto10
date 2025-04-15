@@ -25,8 +25,19 @@ document.getElementById("registerForm").addEventListener("submit", async functio
       return;
     }
 
-    alert("✅ Registro exitoso. Ahora puedes iniciar sesión.");
-    window.location.href = "login.html";
+    // 🟢 Guardar token automáticamente tras registro
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("userRole", data.user.role); // si lo usas para redirecciones
+
+    alert("✅ Registro exitoso. Sesión iniciada automáticamente.");
+
+    // 🧭 Redirigir directamente según rol
+    if (data.user.role === "profesional") {
+      window.location.href = "dashboard-profesional.html";
+    } else {
+      window.location.href = "cliente.html";
+    }
+
   } catch (error) {
     console.error("❌ Error en el servidor:", error);
     alert("⚠️ Error en el servidor. Intenta más tarde.");
