@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
   
-    // ✅ Cargar servicios creados
+  
     async function loadServices() {
       try {
         const response = await fetch(`${API_BASE_URL}/api/services`, {

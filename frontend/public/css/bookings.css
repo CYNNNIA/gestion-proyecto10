@@ -1,4 +1,4 @@
-/* BOOKINGS - ESTILOS PERSONALIZADOS */
+
 
 body {
   font-family: 'Poppins', sans-serif;
@@ -26,7 +26,7 @@ body {
   justify-content: center;
 }
 
-/* Tarjetas uniformes */
+
 .card {
   background-color: #fffaf7;
   border: 1px solid #e3d6cd;
@@ -83,7 +83,6 @@ body {
   background-color: #995746;
 }
 
-/* 🗓️ Mis Reservas */
 .mis-reservas {
   margin-top: 3rem;
   padding-top: 5rem;
@@ -136,7 +135,7 @@ body {
   transform: scale(1.05);
 }
 
-/* === MENÚ HAMBURGUESA === */
+
 .hamburger {
   display: none;
   flex-direction: column;
@@ -151,7 +150,7 @@ body {
   border-radius: 2px;
 }
 
-/* RESPONSIVE */
+
 @media (max-width: 1280px) {
   .mis-reservas {
     padding-top: 6rem;

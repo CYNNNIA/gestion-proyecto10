@@ -1,4 +1,4 @@
-// backend/routes/availabilityRoutes.js
+
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/authMiddleware");
@@ -17,7 +17,7 @@ router.get("/my-availability", auth, getAvailabilityByProfessional);
 router.get("/professional/:professionalId", getAvailabilityByProfessionalId);
 router.get("/service/:serviceId", getAvailabilityByServiceId);
 
-// ✅ Ruta para eliminar una disponibilidad por ID
+
 router.delete('/:id', auth, async (req, res) => {
   try {
     const deleted = await require('../models/Availability').findByIdAndDelete(req.params.id);

@@ -1,8 +1,4 @@
-// ✅ Archivo: public/js/api.js
 
-// Asegúrate de tener API_BASE_URL definido globalmente desde config.js
-// Si usas ES Modules, puedes importarlo también
-// import { API_BASE_URL } from './config.js'
 
 export async function apiRequest(endpoint, method = "GET", data = null, withAuth = false) {
   const options = {

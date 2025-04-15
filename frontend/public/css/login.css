@@ -1,4 +1,4 @@
-/* Reset */
+
 * {
   margin: 0;
   padding: 0;
@@ -14,7 +14,6 @@ body {
   color: #4d3a34;
 }
 
-/* Animación de entrada */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -26,7 +25,6 @@ body {
   }
 }
 
-/* Contenedor principal */
 .auth-container {
   width: 90%;
   max-width: 400px;
@@ -38,14 +36,13 @@ body {
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* Título */
+
 .auth-container h1 {
   font-size: 26px;
   margin-bottom: 1.2rem;
   color: #a4715a;
 }
 
-/* Grupos de inputs */
 .input-group {
   text-align: left;
   margin-bottom: 1rem;
@@ -69,7 +66,7 @@ body {
   font-size: 15px;
 }
 
-/* Botones */
+
 button, .btn-secondary {
   width: 100%;
   padding: 12px;
@@ -99,7 +96,7 @@ button:hover {
   background-color: #887c72;
 }
 
-/* Toggle entre login/registro */
+
 #authToggleText {
   text-align: center;
   font-size: 14px;
@@ -116,7 +113,6 @@ button:hover {
   text-decoration: underline;
 }
 
-/* Navbar */
 nav {
   background-color: #9c6b4f;
   padding: 1rem 2rem;
@@ -143,7 +139,7 @@ nav {
   color: #ffe6d9;
 }
 
-/* Footer */
+
 footer {
   margin-top: auto;
   background-color: #3e2f2f;
@@ -168,7 +164,7 @@ footer {
   max-width: 400px;
   width: 100%;
 }
-/* Cabecera */
+
 .header {
   text-align: center;
   padding: 2rem 1rem 1rem;

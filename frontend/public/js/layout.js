@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentPage = window.location.pathname;
 
   const token = localStorage.getItem("token");
-  const role = localStorage.getItem("userRole"); // 👈 debe haberse guardado al hacer login
+  const role = localStorage.getItem("userRole"); 
 
   if (navbar) {
     navbar.innerHTML = `
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  // Botones y enlaces dinámicos
+
   const loginNav = document.getElementById("loginNav");
   const logoutBtn = document.getElementById("logoutBtn");
   const dashboardLink = document.getElementById("dashboardLink");
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       : "cliente.html";
   }
 
-  // Lógica para ocultar/mostrar botones según sesión
+ 
   if (currentPage.includes("login.html") || currentPage.includes("register.html")) {
     if (loginNav) loginNav.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "none";
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Footer global
+
   if (footer) {
     footer.innerHTML = `
       <footer class="footer">
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Menú hamburguesa para responsive
+
 function toggleMenu() {
   const nav = document.getElementById('navLinks');
   if (nav) nav.classList.toggle('active');

@@ -7,7 +7,6 @@ const connectDB = async () => {
 
         console.log(`🟢 Conectado a MongoDB: ${conn.connection.host}`);
 
-        // Escuchar eventos de la conexión
         mongoose.connection.on('disconnected', () => {
             console.log('🔴 Desconectado de MongoDB');
         });
@@ -18,9 +17,9 @@ const connectDB = async () => {
 
     } catch (error) {
         console.error(`🔴 Error conectando a MongoDB: ${error.message}`);
-        process.exit(1); // Finalizar el proceso si la conexión falla
+        process.exit(1); 
     }
 };
 
-// Exportar la función para usarla en server.js
+
 module.exports = connectDB;

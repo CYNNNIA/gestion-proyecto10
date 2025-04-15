@@ -1,4 +1,4 @@
-// backend/controllers/serviceController.js
+
 
 const Service = require('../models/Service');
 const Availability = require('../models/Availability');
@@ -6,7 +6,7 @@ const Booking = require('../models/Booking');
 const fs = require('fs');
 const path = require('path');
 
-// Crear servicio
+
 exports.createService = async (req, res) => {
   try {
     const { name, description, price, category } = req.body;
@@ -46,7 +46,6 @@ exports.createService = async (req, res) => {
   }
 };
 
-// Obtener todos los servicios
 exports.getAllServices = async (req, res) => {
   try {
     const services = await Service.find().populate("professional", "name email");
@@ -57,7 +56,6 @@ exports.getAllServices = async (req, res) => {
   }
 };
 
-// Obtener servicios del profesional con disponibilidad
 exports.getServicesByProfessional = async (req, res) => {
   try {
     const services = await Service.find({ professional: req.user.id });
@@ -74,7 +72,6 @@ exports.getServicesByProfessional = async (req, res) => {
   }
 };
 
-// Obtener un servicio por ID
 exports.getServiceById = async (req, res) => {
   try {
     const service = await Service.findById(req.params.id);
@@ -85,7 +82,6 @@ exports.getServiceById = async (req, res) => {
   }
 };
 
-// Actualizar servicio
 exports.updateService = async (req, res) => {
   try {
     const { id } = req.params;
@@ -137,7 +133,6 @@ exports.updateService = async (req, res) => {
   }
 };
 
-// Eliminar servicio
 exports.deleteService = async (req, res) => {
   try {
     const service = await Service.findById(req.params.id);

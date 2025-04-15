@@ -1,4 +1,3 @@
-// models/Availability.js
 
 const mongoose = require("mongoose");
 

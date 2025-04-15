@@ -1,4 +1,4 @@
-// models/Service.js
+
 const mongoose = require("mongoose");
 
 const serviceSchema = new mongoose.Schema({
@@ -6,7 +6,7 @@ const serviceSchema = new mongoose.Schema({
   description: String,
   price: { type: Number, required: true },
   category: String,
-  image: { type: String }, // ✅ Añadido para guardar la ruta de la imagen
+  image: { type: String }, 
   professional: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

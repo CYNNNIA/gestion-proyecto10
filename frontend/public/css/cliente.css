@@ -1,6 +1,4 @@
-/* === cliente.css === */
 
-/* 🎯 Contenedor principal */
 .auth-container {
   max-width: 800px;
   margin: 2rem auto;
@@ -10,7 +8,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
-/* 🎉 Encabezados */
+
 .auth-container h1 {
   font-size: 2rem;
   color: #4c3228;
@@ -23,7 +21,7 @@
   margin: 2rem 0 0.5rem;
 }
 
-/* 🧾 Datos de perfil */
+
 .auth-container p {
   margin: 0.4rem 0;
   font-size: 1rem;
@@ -34,7 +32,7 @@
   color: #6d584b;
 }
 
-/* 📋 Lista de reservas */
+
 #reservasList {
   list-style: none;
   padding: 0;
@@ -54,7 +52,6 @@
   flex-wrap: wrap;
 }
 
-/* ❌ Reservas canceladas */
 #reservasList li.cancelada {
   background-color: #ececec;
   color: #a5a5a5;
@@ -68,7 +65,7 @@
   text-decoration: line-through;
 }
 
-/* 🧱 Botones */
+
 #reservasList button {
   background-color: #b1725c;
   color: white;
@@ -93,7 +90,7 @@
   background-color: #913f3f;
 }
 
-/* 🛠️ Modal */
+
 .modal {
   position: fixed;
   top: 0;
@@ -148,7 +145,6 @@
   background-color: #913f3f;
 }
 
-/* 💅 Reservar Servicio CTA */
 .auth-container section:last-of-type {
   background-color: #fffaf7;
   border: 1px solid #e3d6cd;
@@ -180,7 +176,6 @@
   background-color: #c18b5d;
 }
 
-/* 🧭 Responsive */
 @media (max-width: 768px) {
   .auth-container {
     padding: 1rem;

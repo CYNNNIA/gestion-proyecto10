@@ -1,4 +1,4 @@
-/* 🌿 RESET + GLOBAL */
+
 * {
   margin: 0;
   padding: 0;
@@ -14,7 +14,6 @@ body {
   min-height: 100vh;
 }
 
-/* 🧿 HEADER (LOGO ENCIMA DE NAVBAR) */
 .header {
   text-align: center;
   padding: 2rem 1rem 1rem;
@@ -36,7 +35,6 @@ body {
   margin-top: 0.3rem;
 }
 
-/* 🌐 NAVBAR */
 .navbar {
   background-color: #a47551;
   padding: 1rem 2rem;
@@ -71,7 +69,6 @@ body {
   color: #ffe1c1;
 }
 
-/* 🧩 MAIN CONTAINER */
 .main-container {
   flex: 1;
   display: grid;
@@ -82,7 +79,6 @@ body {
   margin: auto;
 }
 
-/* 💳 CARD */
 .card {
   background-color: #fffaf7;
   border: 1px solid #e3d6cd;
@@ -108,7 +104,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
-/* 🎯 BOTONES */
+
 .btn {
   display: inline-block;
   padding: 10px 20px;
@@ -132,7 +128,6 @@ body {
   background-color: #c78b81;
 }
 
-/* 🦶 FOOTER */
 .footer {
   text-align: center;
   background-color: #eee2db;

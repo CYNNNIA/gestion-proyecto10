@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.getElementById("logoutBtn");
     const dashboardLink = document.getElementById("dashboardLink");
   
-    // Mostrar/Ocultar botones
+  
     if (token) {
       if (loginBtn) loginBtn.style.display = "none";
       if (logoutBtn) logoutBtn.style.display = "inline-block";
@@ -28,14 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (logoutBtn) logoutBtn.style.display = "none";
     }
   
-    // Redirigir a panel correcto según rol
     if (dashboardLink) {
       dashboardLink.href = role === "profesional"
         ? "dashboard-profesional.html"
         : "cliente.html";
     }
   
-    // Logout
+
     if (logoutBtn) {
       logoutBtn.addEventListener("click", () => {
         localStorage.clear();

@@ -1,4 +1,4 @@
-/* === DASHBOARD PROFESIONAL - ESTILO UNIFICADO CON BOOKINGS === */
+
 
 body {
   font-family: 'Poppins', sans-serif;
@@ -12,14 +12,13 @@ body {
   padding: 1rem;
 }
 
-/* Títulos */
+
 h1, h2 {
   color: #a0705e;
   font-weight: 600;
   margin-bottom: 1.2rem;
 }
 
-/* === FORMULARIO - CREAR SERVICIO HORIZONTAL === */
 .crear-servicio {
   margin-bottom: 3rem;
 }
@@ -95,7 +94,7 @@ h1, h2 {
   background-color: #c18b5d;
 }
 
-/* === SERVICIOS - CUADRÍCULA TIPO BOOKINGS === */
+
 .servicios-grid {
   display: flex;
   flex-wrap: wrap;
@@ -149,7 +148,7 @@ h1, h2 {
   border: 1px solid #ddd2c8;
 }
 
-/* Botones dentro de tarjetas */
+
 .card button {
   background-color: #b1725c;
   color: white;
@@ -167,7 +166,7 @@ h1, h2 {
   background-color: #995746;
 }
 
-/* Lista de disponibilidad */
+
 .card ul {
   list-style: none;
   padding: 0;
@@ -201,7 +200,6 @@ h1, h2 {
   transform: scale(1.2);
 }
 
-/* Botones de acción */
 .card .action-buttons {
   display: flex;
   flex-direction: column;
@@ -213,7 +211,7 @@ h1, h2 {
   width: 100%;
 }
 
-/* === RESERVAS RECIBIDAS === */
+
 #listaReservasRecibidas {
   list-style: none;
   padding: 0;
@@ -236,7 +234,7 @@ h1, h2 {
  gap: 5px;
  color: red;
 }
-/* Filtro */
+
 #filtroServicio {
   display: block;
   margin: 1rem auto;
@@ -247,7 +245,7 @@ h1, h2 {
   font-size: 1.2rem;
 }
 
-/* === RESPONSIVE === */
+
 @media (max-width: 880px) {
   .card {
     width: 90%;

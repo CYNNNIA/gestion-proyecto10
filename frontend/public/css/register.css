@@ -1,6 +1,4 @@
-/* === register.css === */
 
-/* 🎨 RESET */
 * {
   margin: 0;
   padding: 0;
@@ -16,7 +14,7 @@ body, html {
   flex-direction: column;
 }
 
-/* 🔝 HEADER */
+
 .header {
   background-color: #9C6B4F;
   text-align: center;
@@ -36,7 +34,6 @@ body, html {
   color: #fce7dc;
 }
 
-/* 🧭 NAVBAR */
 nav {
   background-color: #b2876f;
   padding: 0.8rem 1.5rem;
@@ -61,7 +58,6 @@ nav {
   color: #ffe1c1;
 }
 
-/* 📋 FORMULARIO */
 main {
   flex: 1;
   display: flex;
@@ -124,7 +120,6 @@ button[type="submit"]:hover {
   background-color: #995746;
 }
 
-/* 🧭 Alternativa de login */
 #authToggleText {
   text-align: center;
   margin-top: 1rem;
@@ -135,7 +130,7 @@ button[type="submit"]:hover {
   text-decoration: underline;
 }
 
-/* 🦶 FOOTER */
+
 footer {
   background-color: #3e2f2f;
   color: #f3e9e1;

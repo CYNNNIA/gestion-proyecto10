@@ -2,7 +2,7 @@ const Booking = require("../models/Booking");
 const Service = require("../models/Service");
 const Availability = require("../models/Availability");
 
-// Crear reserva
+
 const createBooking = async (req, res) => {
   try {
     const { service, datetime } = req.body;
@@ -70,8 +70,7 @@ const createBooking = async (req, res) => {
   }
 };
 
-// Cancelar reserva
-// Cancelar reserva
+
 const cancelBooking = async (req, res) => {
   try {
     const { id } = req.params;
@@ -83,18 +82,16 @@ const cancelBooking = async (req, res) => {
 
     const service = await Service.findById(booking.service);
 
-    // 👉 PERMITIR que el profesional dueño del servicio pueda cancelar
     const isOwner = service.professional.toString() === req.user.id;
 
     if (booking.user.toString() !== req.user.id && req.user.role !== "admin" && !isOwner) {
       return res.status(403).json({ message: "⚠️ No tienes permiso para cancelar esta reserva." });
     }
 
-    // Marcar como cancelada
+
     booking.status = "cancelada";
     await booking.save();
 
-    // Restaurar disponibilidad si la fecha es válida
     if (!isNaN(booking.datetime.getTime())) {
       await Availability.create({
         professional: service.professional,
@@ -111,7 +108,7 @@ const cancelBooking = async (req, res) => {
   }
 };
 
-// Obtener reservas por usuario
+
 const getBookingsByUser = async (req, res) => {
   try {
     const bookings = await Booking.find({ user: req.user.id })
@@ -125,7 +122,7 @@ const getBookingsByUser = async (req, res) => {
   }
 };
 
-// Obtener todas las reservas (admin)
+
 const getAllBookings = async (req, res) => {
   try {
     if (!req.user || req.user.role !== "admin") {
@@ -143,7 +140,7 @@ const getAllBookings = async (req, res) => {
   }
 };
 
-// Obtener reservas del profesional
+
 const getBookingsForProfessional = async (req, res) => {
   try {
     const services = await Service.find({ professional: req.user.id });
@@ -160,7 +157,6 @@ const getBookingsForProfessional = async (req, res) => {
   }
 };
 
-// Obtener reservas por servicio
 const getBookingsByService = async (req, res) => {
   try {
     const bookings = await Booking.find({ service: req.params.serviceId });
@@ -171,7 +167,7 @@ const getBookingsByService = async (req, res) => {
   }
 };
 
-// Actualizar reserva
+
 const updateBooking = async (req, res) => {
   try {
     const { id } = req.params;
@@ -203,17 +199,17 @@ const updateBooking = async (req, res) => {
       return res.status(400).json({ message: "⚠️ Fecha nueva no disponible." });
     }
 
-    // Restaurar antigua
+   
     await Availability.create({
       service: booking.service,
       professional: service.professional,
       dateTime: booking.datetime,
     });
 
-    // Eliminar nueva
+   
     await Availability.findByIdAndDelete(available._id);
 
-    // Actualizar reserva
+   
     booking.date = newDateTime.toISOString().split("T")[0];
     booking.time = newDateTime.toTimeString().slice(0, 5);
     booking.datetime = newDateTime;

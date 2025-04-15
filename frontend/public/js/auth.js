@@ -1,4 +1,4 @@
-// public/js/auth.js
+
 
 const form = document.getElementById("authForm");
 const errorMessage = document.getElementById("errorMessage");
@@ -43,7 +43,7 @@ form.addEventListener("submit", async (e) => {
 
     if (!isRegistering) {
       localStorage.setItem("token", data.token);
-      localStorage.setItem("userRole", data.user.role); // 👈 necesario para layout.js o navbar dinámica
+      localStorage.setItem("userRole", data.user.role); 
 
       const redir = data.user.role === "profesional"
         ? "dashboard-profesional.html"

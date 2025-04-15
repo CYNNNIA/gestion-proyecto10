@@ -24,7 +24,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     }
 
     localStorage.setItem("token", data.token);
-    localStorage.setItem("userRole", data.user.role); // 👈 Necesario para layout.js
+    localStorage.setItem("userRole", data.user.role); 
 
     window.location.href = data.user.role === "profesional"
       ? "dashboard-profesional.html"

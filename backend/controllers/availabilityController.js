@@ -1,6 +1,6 @@
 const Availability = require("../models/Availability");
 
-// Crear disponibilidad (usada al crear servicio)
+
 exports.addAvailability = async (req, res) => {
   try {
     const { dateTime, service } = req.body;
@@ -12,7 +12,7 @@ exports.addAvailability = async (req, res) => {
     const newAvailability = new Availability({
       professional: req.user.id,
       service,
-      dateTime: new Date(dateTime), // ✅ Forzar tipo Date
+      dateTime: new Date(dateTime), 
     });
 
     await newAvailability.save();
@@ -26,7 +26,7 @@ exports.addAvailability = async (req, res) => {
   }
 };
 
-// Obtener TODA la disponibilidad (admin)
+
 exports.getAllAvailability = async (req, res) => {
   try {
     const availability = await Availability.find();
@@ -37,7 +37,7 @@ exports.getAllAvailability = async (req, res) => {
   }
 };
 
-// Profesional autenticado: obtener sus disponibilidades
+
 exports.getAvailabilityByProfessional = async (req, res) => {
   try {
     const availability = await Availability.find({ professional: req.user.id });
@@ -48,7 +48,7 @@ exports.getAvailabilityByProfessional = async (req, res) => {
   }
 };
 
-// Profesional por ID (para cliente)
+
 exports.getAvailabilityByProfessionalId = async (req, res) => {
   try {
     const { professionalId } = req.params;
@@ -70,7 +70,7 @@ exports.getAvailabilityByProfessionalId = async (req, res) => {
   }
 };
 
-// 🔥 NUEVA: obtener disponibilidad por servicio
+
 exports.getAvailabilityByServiceId = async (req, res) => {
   try {
     const { serviceId } = req.params;
