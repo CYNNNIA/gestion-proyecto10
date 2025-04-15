@@ -1,7 +1,7 @@
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const email = document.getElementById("email").value.trim();
+  const email = document.getElementById("email").value.trim().toLowerCase(); // <-- cuidado con espacios y mayúsculas
   const password = document.getElementById("password").value.trim();
 
   if (!email || !password) {
@@ -19,21 +19,22 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     const data = await res.json();
 
     if (!res.ok) {
-      alert(`❌ ${data.message || "Error al iniciar sesión"}`);
+      alert("❌ " + (data.message || "Error desconocido al iniciar sesión."));
       return;
     }
 
-    // 🟢 Guardar el token y redirigir según el rol
+    // Guardar token y redirigir según rol
     localStorage.setItem("token", data.token);
     localStorage.setItem("userRole", data.user.role);
 
-    if (data.user.role === "profesional") {
-      window.location.href = "dashboard-profesional.html";
-    } else {
-      window.location.href = "cliente.html";
-    }
+    const redirectPage = data.user.role === "profesional"
+      ? "dashboard-profesional.html"
+      : "cliente.html";
+
+    window.location.href = redirectPage;
+
   } catch (err) {
-    console.error("❌ Error al iniciar sesión:", err);
-    alert("⚠️ Error en el servidor. Intenta más tarde.");
+    console.error("❌ Error de red:", err);
+    alert("⚠️ No se pudo conectar al servidor.");
   }
 });
