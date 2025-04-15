@@ -5,7 +5,10 @@ const bcrypt = require("bcryptjs");
 // 📌 REGISTRO: con retorno automático del token
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const name = req.body.name?.trim();
+    const email = req.body.email?.trim().toLowerCase();
+    const password = req.body.password?.trim();
+    const role = req.body.role;
 
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: "Todos los campos son obligatorios." });
@@ -48,7 +51,8 @@ exports.registerUser = async (req, res) => {
 // 📌 LOGIN: Validación y token si es correcto
 exports.loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const email = req.body.email?.trim().toLowerCase();
+    const password = req.body.password?.trim();
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email y contraseña son obligatorios." });
@@ -56,11 +60,13 @@ exports.loginUser = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("Usuario no encontrado:", email);
       return res.status(401).json({ message: "Credenciales inválidas." });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log("Contraseña incorrecta para:", email);
       return res.status(401).json({ message: "Credenciales inválidas." });
     }
 
