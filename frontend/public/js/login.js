@@ -1,7 +1,7 @@
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const email = document.getElementById("email").value.trim().toLowerCase(); // <-- cuidado con espacios y mayúsculas
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
   if (!email || !password) {
@@ -12,29 +12,32 @@ document.getElementById("loginForm").addEventListener("submit", async function (
   try {
     const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({ email, password }),
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      alert("❌ " + (data.message || "Error desconocido al iniciar sesión."));
+      console.error("❌ Error en login:", data.message);
+      alert("❌ " + (data.message || "Credenciales inválidas."));
       return;
     }
 
-    // Guardar token y redirigir según rol
+    // Guardar token y datos del usuario
     localStorage.setItem("token", data.token);
     localStorage.setItem("userRole", data.user.role);
 
-    const redirectPage = data.user.role === "profesional"
-      ? "dashboard-profesional.html"
-      : "cliente.html";
-
-    window.location.href = redirectPage;
-
+    // Redirigir según el rol
+    if (data.user.role === "profesional") {
+      window.location.href = "dashboard-profesional.html";
+    } else {
+      window.location.href = "cliente.html";
+    }
   } catch (err) {
-    console.error("❌ Error de red:", err);
-    alert("⚠️ No se pudo conectar al servidor.");
+    console.error("❌ Error en el servidor:", err);
+    alert("⚠️ Error del servidor. Intenta más tarde.");
   }
 });
