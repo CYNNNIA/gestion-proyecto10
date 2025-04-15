@@ -19,16 +19,16 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     const data = await res.json();
 
     if (!res.ok) {
-      alert(`❌ ${data.message || "Error desconocido"}`);
+      alert(`❌ ${data.message || "Credenciales incorrectas"}`);
       return;
     }
 
     localStorage.setItem("token", data.token);
-    localStorage.setItem("userRole", data.user.role); 
-
+    localStorage.setItem("userRole", data.user?.role); // Si lo necesitas
     window.location.href = data.user.role === "profesional"
       ? "dashboard-profesional.html"
       : "cliente.html";
+
   } catch (err) {
     alert("❌ Error al iniciar sesión.");
     console.error(err);
