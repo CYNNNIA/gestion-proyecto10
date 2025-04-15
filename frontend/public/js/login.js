@@ -1,3 +1,5 @@
+const API_BASE_URL = "https://gestion-proyecto10.onrender.com";
+
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -19,18 +21,18 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     const data = await res.json();
 
     if (!res.ok) {
-      alert(`❌ ${data.message || "Credenciales incorrectas"}`);
+      alert(`❌ ${data.message || "Credenciales inválidas"}`);
       return;
     }
 
     localStorage.setItem("token", data.token);
-    localStorage.setItem("userRole", data.user?.role); // Si lo necesitas
+    localStorage.setItem("userRole", data.user.role);
     window.location.href = data.user.role === "profesional"
       ? "dashboard-profesional.html"
       : "cliente.html";
 
   } catch (err) {
-    alert("❌ Error al iniciar sesión.");
-    console.error(err);
+    console.error("❌ Error al iniciar sesión:", err);
+    alert("❌ Error de conexión con el servidor.");
   }
 });
