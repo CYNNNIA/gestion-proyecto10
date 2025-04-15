@@ -1,5 +1,3 @@
-const API_BASE_URL = "https://gestion-proyecto10.onrender.com";
-
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -21,18 +19,21 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     const data = await res.json();
 
     if (!res.ok) {
-      alert(`❌ ${data.message || "Credenciales inválidas"}`);
+      alert(`❌ ${data.message || "Error al iniciar sesión"}`);
       return;
     }
 
+    // 🟢 Guardar el token y redirigir según el rol
     localStorage.setItem("token", data.token);
     localStorage.setItem("userRole", data.user.role);
-    window.location.href = data.user.role === "profesional"
-      ? "dashboard-profesional.html"
-      : "cliente.html";
 
+    if (data.user.role === "profesional") {
+      window.location.href = "dashboard-profesional.html";
+    } else {
+      window.location.href = "cliente.html";
+    }
   } catch (err) {
     console.error("❌ Error al iniciar sesión:", err);
-    alert("❌ Error de conexión con el servidor.");
+    alert("⚠️ Error en el servidor. Intenta más tarde.");
   }
 });
